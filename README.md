@@ -30,6 +30,13 @@ Hoy EIRA recibe los resultados impresos, los escanea, los asocia a cada paciente
 - Recuperación del historial de cada paciente por brigada, o buscándola por folio o nombre.
 - La paciente ve su propio historial y el catálogo de **Servicios EIRA** con las próximas brigadas de su municipio. Esta sección es solo informativa.
 
+## Diseño y experiencia de la paciente (v3)
+- **Estilo acuarela:** papel con textura, manchas suaves de rosa y lila, títulos en Fraunces y logos pintados (en `assets/`). Design system: https://claude.ai/artifact/2jr7jLqrUWcfFKQ9DJUvur
+- **Folios de 6 números** (`EIRA-014282`): el último es dígito verificador (Luhn), así que un número cambiado se detecta al momento. Se acepta escribirlo con o sin "EIRA-", con espacios o con la letra O.
+- **Menos toques:** el SMS trae `eira-contigo.mx/#f=001776` y abre la entrada con el folio ya escrito. La fecha de nacimiento va en 3 casillas numéricas que avanzan solas, y el código se llena solo y entra en cuanto se completa. Si hay un solo resultado nuevo, la paciente llega directo a él, y "Ver mi documento" lo abre en un toque.
+- **Animación ligera** al completar acciones (apartar lugar, pedir apoyo, asociar, autorizar, enviar aviso). Nunca se usa al mostrar un resultado, y se desactiva con "reducir movimiento".
+- Pacientes de ejemplo: `EIRA-014282` (12/03/1984), `EIRA-000984` (02/07/1979), `EIRA-001776` (23/11/1990).
+
 ## Cómo correrlo
 No necesita instalación ni credenciales:
 
