@@ -355,7 +355,7 @@ function resDetalle(r){
   <div class="notice"><b>Tu documento</b><br><span class="fine">Se abre con un enlace seguro que vence en 5 minutos. Solo funciona con tu sesión.</span>
   <div class="row">${vivo?`<button class="pri" data-act="abrir" data-id="${r.id}">Abrir documento</button><span class="fine">Vence en <b data-exp="${tk.exp}">5:00</b></span>`:`<button class="pri" data-act="enlace" data-id="${r.id}">${tk?'Generar un enlace nuevo':'Ver mi resultado'}</button>`}</div>
   ${vivo?`<p class="code" style="margin-top:10px">eira-contigo.mx/r/${r.id}?token=${tk.tok}&amp;expira=300s</p>`:''}</div>
-  <section><h3>Qué significa</h3><p><b>${esc(ed.t)}</b></p><p>${esc(ed.b)}</p><p class="fine">Texto de ejemplo. En producción lo redacta y aprueba el equipo médico de EIRA.</p></section>`}
+  <section><h3>Qué significa</h3><p><b>${esc(ed.t)}</b></p><p>${esc(ed.b)}</p>${'speechSynthesis' in window?`<button data-act="leer" data-id="${r.id}">Escuchar en voz alta</button>`:''}<p class="fine">Texto de ejemplo. En producción lo redacta y aprueba el equipo médico de EIRA.</p></section>`}
   <section><h3>Qué sigue</h3>${r.acompanada?'<p>EIRA te explicará los siguientes pasos en tu cita.</p>':`<p>Tu médica indicó: <b>${esc(r.conducta)}</b></p>${r.estudios.length?`<p style="margin-bottom:0">Estudios recomendados para ti:</p><ul>${r.estudios.map(e=>`<li>${esc(e)}</li>`).join('')}</ul>`:''}`}
   ${prox?`<div class="cand"><div><b>${esc(prox.nombre)}</b><br><span class="fine">${fmtF(prox.fecha)} · ${prox.servicios.map(esc).join(', ')}</span></div><button data-act="apartar" data-id="${prox.id}">Apartar mi lugar</button></div>`:''}</section>
   <section><h3>No estás sola</h3>
@@ -363,6 +363,8 @@ function resDetalle(r){
   ${apoyo.map(a=>`<div class="cand"><div><b>${esc(a.n)}</b><br><span class="fine">${esc(a.tipo)} · ${esc(a.d)}</span>${a.tel?`<br><a href="tel:${a.tel.replace(/\s/g,'')}">${esc(a.tel)}</a>`:''}</div>${a.real?'<span class="chip o">Servicio real</span>':'<span class="chip m">Ejemplo</span>'}</div>`).join('')}
   <div class="row"><button class="pri" data-act="hablar" data-id="${r.id}">Quiero hablar con alguien de EIRA</button></div>
   <p class="fine">Si estás en peligro inmediato, llama al 911.</p></section>
+  <section><h3>Quién ha visto tu documento</h3><p class="fine">Cada acción sobre tu resultado queda registrada. Si ves algo que no reconoces, avísale a EIRA.</p>
+  ${S.bitacora.filter(l=>l.ref===r.id).map(l=>`<div class="cand"><div class="full"><b>${esc(l.actor)}</b> · ${esc(l.accion)}<br><span class="fine">${fmtT(l.t)}</span></div></div>`).join('')}</section>
   <section><h3>Prevención para ti y las tuyas</h3><ul>${PREV.map(x=>`<li>${esc(x)}</li>`).join('')}</ul></section></article>`;
 }
 function servicios(p){const pr=proximas(p.municipio);return `<div class="card"><h2>Servicios EIRA</h2><p class="fine">Información de servicios. Catálogo de ejemplo: EIRA confirma qué se ofrece en cada brigada.</p>
@@ -399,6 +401,8 @@ const ACT={
   enlace:b=>{const id=b.dataset.id,tok=Array.from(crypto.getRandomValues(new Uint8Array(8)),x=>x.toString(16).padStart(2,'0')).join('');ui.tokens[id]={tok,exp:Date.now()+300000};log('Generó enlace firmado de 5 minutos',id);render()},
   abrir:b=>{const r=res(b.dataset.id),tk=ui.tokens[r.id];if(!tk||tk.exp<Date.now()){toast('El enlace venció. Genera uno nuevo.');render();return}
     if(['autorizado','notificado'].includes(r.estado))r.estado='consultado';log('Abrió su resultado con enlace firmado',r.id);openModal('Tu resultado',docFrame(r))},
+  leer:b=>{const r=res(b.dataset.id),ed=EDU[(CATS[r.categoria]||CATS.negativo).g];
+    try{speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(`${ed.t}. ${ed.b} Tu médica indicó: ${r.conducta}.`);u.lang='es-MX';u.rate=0.95;speechSynthesis.speak(u);log('Escuchó la explicación en voz alta',r.id)}catch(e){toast('Tu navegador no puede leer en voz alta.')}},
   hablar:b=>{S.solicitudes.unshift({id:uid('S'),pacienteId:ui.pac,tipo:'Quiere hablar con alguien de EIRA',t:now(),estado:'pendiente'});log('Pidió hablar con alguien de EIRA',b.dataset.id);toast('Listo. Alguien de EIRA te va a contactar pronto.')},
   apartar:b=>{const x=brg(b.dataset.id);S.solicitudes.unshift({id:uid('S'),pacienteId:ui.pac,tipo:'Apartar lugar en '+x.nombre,t:now(),estado:'pendiente'});log('Pidió apartar lugar en brigada',x.id);toast(`Pedimos tu lugar en ${x.nombre}. EIRA te confirmará.`)}
 };
