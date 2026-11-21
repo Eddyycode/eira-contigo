@@ -1,15 +1,442 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>EIRA Contigo · Demo</title>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>EIRA Contigo</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;600;800&display=swap" rel="stylesheet">
+<style>
+/* VOICE: cálido y clínico; tranquiliza, no alarma.
+   IDEA: el expediente rosa de EIRA, del laboratorio a las manos de la paciente.
+   PICTURE: la herramienta misma; cada rol ve su mesa de trabajo.
+   COLOUR and TYPE: rosa EIRA + ciruela profundo + blanco; Figtree.
+   LAYOUT: barra de roles arriba, lista + detalle; vista de paciente en columna de teléfono. */
+:root{color-scheme:light dark;--bg:light-dark(#fffafc,#170c14);--card:light-dark(#ffffff,#221420);--ink:light-dark(#2b0f22,#f7e8f0);--muted:light-dark(#76586b,#c4a3b7);--line:light-dark(#f0d9e5,#3d2435);--rosa:light-dark(#c8236f,#ff6aa8);--rosa-s:light-dark(#fde6f0,#3a1830);--plum:#3b0d2c;--ok:light-dark(#0e7a57,#62d6a8);--okb:light-dark(#e3f6ee,#123326);--warn:light-dark(#9a5300,#ffb963);--warnb:light-dark(#fff1de,#3a2810)}
+:root[data-theme=light]{color-scheme:light}:root[data-theme=dark]{color-scheme:dark}
+*{box-sizing:border-box;min-width:0}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.55 Figtree,system-ui,sans-serif;overflow-x:clip}
+header.top{background:var(--plum);color:#fff;padding:12px max(4vw,16px);display:flex;flex-wrap:wrap;gap:10px 18px;align-items:center}
+.brand{display:flex;gap:10px;align-items:center;font-weight:800;font-size:20px}
+.brand svg{flex:none}
+.demo{font-size:13px;background:#ffffff1f;border-radius:99px;padding:4px 10px}
+nav.roles{display:flex;flex-wrap:wrap;gap:6px;margin-left:auto}
+nav.roles button{background:transparent;color:#fff;border-color:#ffffff40}
+nav.roles button[aria-current=true]{background:#fff;color:var(--plum);border-color:#fff}
+main{padding:clamp(18px,3vw,36px) max(4vw,16px);max-width:1240px;margin:auto}
+h1{font-size:clamp(28px,4vw,40px);line-height:1.08;margin:0 0 6px;text-wrap:balance}
+h2{font-size:21px;line-height:1.2;margin:0 0 8px}h3{font-size:17px;margin:16px 0 6px}
+.lead{color:var(--muted);margin:0 0 20px;max-width:70ch}
+.card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:18px}
+.grid2{display:grid;grid-template-columns:minmax(0,380px) minmax(0,1fr);gap:18px;align-items:start}
+.g-med{grid-template-columns:minmax(0,1fr) minmax(0,400px)}
+@media(max-width:860px){.grid2,.g-med{grid-template-columns:minmax(0,1fr)}}
+label{display:block;font-size:14px;font-weight:600;margin:10px 0 0}
+input,select,textarea{display:block;width:100%;font:inherit;font-size:16px;margin-top:4px;padding:10px 12px;border:1px solid var(--line);border-radius:10px;background:var(--bg);color:var(--ink);min-height:44px}
+input[type=checkbox]{display:inline-block;width:20px;height:20px;min-height:0;margin:0 8px 0 0;vertical-align:-4px;accent-color:var(--rosa)}
+button{font:inherit;font-weight:600;font-size:15px;min-height:44px;padding:9px 16px;border-radius:10px;border:1px solid var(--line);background:var(--card);color:var(--ink);cursor:pointer}
+button.pri{background:var(--rosa);border-color:var(--rosa);color:#fff}
+button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible,a:focus-visible{outline:3px solid var(--rosa);outline-offset:2px}
+a{color:var(--rosa)}
+.row{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px;align-items:center}
+.muted{color:var(--muted)}.fine{font-size:13px;color:var(--muted)}
+.chip{display:inline-block;font-size:13px;font-weight:600;padding:2px 10px;border-radius:99px;background:var(--rosa-s);color:var(--rosa);white-space:nowrap}
+.chip.o{background:var(--okb);color:var(--ok)}.chip.w{background:var(--warnb);color:var(--warn)}.chip.m{background:var(--line);color:var(--muted)}
+table{width:100%;border-collapse:collapse;font-size:15px}th,td{text-align:left;padding:9px 8px;border-bottom:1px solid var(--line);vertical-align:top}th{font-size:13px;color:var(--muted);font-weight:600}
+.list{display:grid;gap:8px}
+.item{display:flex;justify-content:space-between;gap:10px;align-items:center;text-align:left;width:100%;padding:12px 14px;font-weight:400}
+.item[aria-current=true]{border-color:var(--rosa);box-shadow:0 0 0 2px var(--rosa-s)}
+.tabs{display:flex;flex-wrap:wrap;gap:6px;margin:0 0 18px;border-bottom:1px solid var(--line);padding-bottom:10px}
+.tabs button{border-color:transparent;background:transparent}.tabs button[aria-current=true]{background:var(--rosa-s);color:var(--rosa)}
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(118px,1fr));gap:10px;margin:14px 0 16px}
+.kpi{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:12px;font-size:14px}.kpi b{display:block;font-size:28px;line-height:1.1}
+.cand{border:1px solid var(--line);border-radius:12px;padding:12px;margin:10px 0 0;display:grid;grid-template-columns:minmax(0,1fr) auto;gap:6px 12px;align-items:start}
+.cand .full{grid-column:1/-1}
+.score{font-size:28px;font-weight:800;color:var(--rosa);line-height:1}
+.notice{background:var(--rosa-s);border-radius:14px;padding:14px 16px;margin:12px 0}
+.doc{width:100%;height:min(560px,70vh);border:1px solid var(--line);border-radius:12px;background:#fff}
+.modal{position:fixed;inset:0;background:#2b0f2299;display:grid;place-items:center;padding:16px;z-index:10}
+.modal>.card{width:min(860px,100%);max-height:92vh;overflow:auto}
+#toast{position:fixed;left:50%;bottom:20px;transform:translateX(-50%);background:var(--plum);color:#fff;padding:12px 18px;border-radius:12px;width:max-content;max-width:min(560px,92vw);z-index:20;opacity:0;transition:opacity .2s;pointer-events:none}#toast.on{opacity:1}
+.phone{max-width:520px;margin:auto}
+.res section{border-top:1px solid var(--line);margin-top:16px}
+.svc{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:0 10px}
+.code{font:600 14px/1.5 ui-monospace,Menlo,monospace;background:var(--rosa-s);padding:8px 10px;border-radius:8px;overflow-wrap:anywhere;margin:0}
+footer{padding:20px max(4vw,16px) 32px;color:var(--muted);font-size:13px;text-align:center}
+ul{padding-left:20px}
+@media(prefers-reduced-motion:reduce){#toast{transition:none}}
+@media(max-width:600px){table{font-size:13px}.stack thead{display:none}.stack tr{display:grid;padding-block:10px;border-bottom:1px solid var(--line)}.stack td{display:flow-root;border:0;padding:3px 0;padding-inline-start:8em;text-align:start}.stack td::before{content:attr(data-l);float:inline-start;width:7.5em;margin-inline-start:-8em;white-space:normal;color:var(--muted)}.stack td:empty{display:none}}
+</style>
+<script>new MutationObserver(()=>{for(const c of document.querySelectorAll('.stack td:not([data-l])')){let i=0,p=c;while(p=p.previousElementSibling)i+=p.colSpan;c.dataset.l=c.closest('table').rows[0].cells[i]?.textContent||''}}).observe(document,{childList:true,subtree:true})</script>
 </head>
 <body>
-  <!-- PLACEHOLDER: el demo interactivo se agrega aquí. -->
-  <main style="font-family: system-ui, sans-serif; max-width: 40rem; margin: 3rem auto; padding: 0 1rem;">
-    <h1>EIRA Contigo</h1>
-    <p>Demo en construcción. Todos los datos son ficticios.</p>
-  </main>
+<header class="top">
+  <div class="brand"><svg width="26" height="26" viewBox="0 0 24 24" aria-hidden="true"><path fill="#ff8fbf" d="M12 2.5c-2.3 0-4.1 1.8-4.1 4.1 0 2.4 1.6 4.6 3 6.4L6.4 20.6l2.3 1.1L12 16.3l3.3 5.4 2.3-1.1-4.5-7.6c1.4-1.8 3-4 3-6.4 0-2.3-1.8-4.1-4.1-4.1zm0 2.3c1 0 1.8.8 1.8 1.8 0 1.2-.8 2.6-1.8 3.9-1-1.3-1.8-2.7-1.8-3.9 0-1 .8-1.8 1.8-1.8z"/></svg>EIRA Contigo</div>
+  <span class="demo">Prototipo · todos los datos son ficticios</span>
+  <nav class="roles" aria-label="Cambiar de rol para la demo">
+    <button data-act="rol" data-r="lab">Laboratorio</button>
+    <button data-act="rol" data-r="admin">Admin EIRA</button>
+    <button data-act="rol" data-r="medico">Médica</button>
+    <button data-act="rol" data-r="paciente">Paciente</button>
+    <button data-act="reset">Reiniciar demo</button>
+  </nav>
+</header>
+<main id="app"></main>
+<div id="toast" role="status" aria-live="polite"></div>
+<footer>EIRA Contigo · Reto 4, Nerdearla Vibeathon by Devin · Para EIRA Movimiento Rosa A.C. · Prototipo: no usar con datos reales.</footer>
+<script>
+{
+const KEY='eira-contigo-v1';
+const app=document.getElementById('app'), T=document.getElementById('toast');
+const blobs={};
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const norm=s=>String(s||'').normalize('NFD').replace(/[̀-ͯ]/g,'').toLowerCase().replace(/[^a-z0-9 ]/g,' ').split(/\s+/).filter(Boolean);
+const sim=(a,b)=>{const A=new Set(norm(a)),B=new Set(norm(b));if(!A.size||!B.size)return 0;let i=0;A.forEach(x=>{if(B.has(x))i++});return i/(A.size+B.size-i)};
+const now=()=>new Date().toISOString();
+const fmtF=d=>new Date(d.length===10?d+'T12:00:00':d).toLocaleDateString('es-MX',{day:'numeric',month:'short',year:'numeric'});
+const fmtT=d=>new Date(d).toLocaleString('es-MX',{day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'});
+const edad=f=>{const b=new Date(f+'T12:00:00'),n=new Date();let a=n.getFullYear()-b.getFullYear();if(n<new Date(n.getFullYear(),b.getMonth(),b.getDate()))a--;return a};
+const maskTel=t=>'•• •••• '+String(t).replace(/\D/g,'').slice(-4);
+const uid=p=>p+'-'+Math.random().toString(36).slice(2,7).toUpperCase();
+const today=new Date().toISOString().slice(0,10);
+
+const CATS={
+  negativo:{n:'Negativo para lesión intraepitelial o malignidad',g:'negativo',c:'Control de rutina'},
+  ascus:{n:'ASC-US · células atípicas de significado indeterminado',g:'leve',c:'Prueba de VPH'},
+  lsil:{n:'LSIL · lesión intraepitelial de bajo grado',g:'leve',c:'Repetir citología'},
+  asch:{n:'ASC-H · atípicas, no se descarta alto grado',g:'estudio',c:'Colposcopía'},
+  hsil:{n:'HSIL · lesión intraepitelial de alto grado',g:'estudio',c:'Colposcopía'},
+  carcinoma:{n:'Carcinoma',g:'acompanada',c:'Referencia a especialista'},
+  inadecuada:{n:'Muestra inadecuada',g:'inadecuada',c:'Repetir toma de muestra'}
+};
+const CONDUCTAS=['Control de rutina','Repetir citología','Prueba de VPH','Colposcopía','Referencia a especialista','Repetir toma de muestra'];
+const ESTUDIOS=['Revisión mamaria EIRA','Ultrasonido mamario','Prueba de VPH','Colposcopía','Plática de prevención'];
+const SERV_B=['Citología','Revisión mamaria','Ultrasonido mamario','Termografía','Plática de prevención'];
+const EST={cargado:['Cargado',''],asociado:['Asociado',''],revisado:['Revisado',''],observado:['Observado','w'],rechazado:['Repetir estudio','w'],autorizado:['Autorizado','o'],notificado:['Notificado','o'],consultado:['Consultado','o'],cerrado:['Cerrado','m']};
+const VISIBLE=['autorizado','notificado','consultado','cerrado'];
+const EDU={
+  negativo:{t:'No se encontraron cambios en tus células',b:'En esta muestra no se observaron células anormales en el cuello del útero. Es una buena noticia. La citología se repite de forma periódica: tu médica te dirá cuándo te toca la siguiente.'},
+  leve:{t:'Se encontraron cambios leves',b:'Se observaron cambios pequeños en algunas células del cuello del útero. Son frecuentes y muchas veces se relacionan con el virus del papiloma humano (VPH), que es muy común. Este resultado no es un diagnóstico de cáncer y muchos de estos cambios desaparecen solos, pero es importante hacer el seguimiento que te indicaron.'},
+  estudio:{t:'Hace falta un estudio más detallado',b:'Se observaron cambios en algunas células que conviene revisar de cerca, normalmente con una colposcopía: un examen en el que se observa el cuello del útero con una lente de aumento. Este resultado no es un diagnóstico de cáncer. Detectados a tiempo, estos cambios se pueden tratar; lo importante es no dejar pasar la cita.'},
+  inadecuada:{t:'La muestra no se pudo analizar',b:'La muestra no tuvo suficientes células para analizarse. No significa que algo esté mal: solo hay que repetir la toma.'},
+  acompanada:{t:'',b:''}
+};
+const HISTORIAS=[
+  {g:'leve',t:'Cuando vi que tenía cambios leves me asusté mucho. Me explicaron que es frecuente, hice mi seguimiento y en la siguiente revisión todo salió bien.',a:'Mujer de 38 años, Zapotlán'},
+  {g:'estudio',t:'Lo que más me ayudó fue no ir sola a la colposcopía. Una madrina de EIRA me acompañó y me explicó cada paso.',a:'Mujer de 45 años, Tuxpan'},
+  {g:'negativo',t:'Me hice la citología por primera vez en una brigada. Ahora llevo a mi mamá y a mi hermana.',a:'Mujer de 29 años, Gómez Farías'},
+  {g:'inadecuada',t:'Me tocó repetir la toma porque la muestra no alcanzó. Fue rápido y en la siguiente brigada ya quedó.',a:'Mujer de 33 años, Zapotiltic'}
+];
+const APOYO=[
+  {n:'Línea de la Vida',tipo:'Línea de ayuda',d:'Gratuita, 24 horas, todo el país',tel:'800 911 2000',real:true},
+  {n:'Círculo Rosa Zapotlán',tipo:'Grupo de apoyo',d:'Presencial, cada 15 días',municipio:'Zapotlán el Grande'},
+  {n:'Círculo Rosa Tuxpan',tipo:'Grupo de apoyo',d:'Presencial, cada mes',municipio:'Tuxpan'},
+  {n:'Psicóloga voluntaria EIRA',tipo:'Terapia',d:'En línea, sin costo'},
+  {n:'Madrinas EIRA',tipo:'Acompañamiento',d:'Mujeres que ya pasaron por algo parecido te acompañan'}
+];
+const PREV=['La vacuna contra el VPH protege contra los tipos de virus que causan la mayoría de los casos de cáncer cervicouterino.','El condón reduce el riesgo de contagio de VPH.','Haz tu autoexploración mamaria cada mes y acude a tus revisiones.','Invita a las mujeres de tu familia a la próxima brigada.'];
+const SERVICIOS=[['Citología cervical (Papanicolaou)','Detecta cambios en las células del cuello del útero.'],['Exploración clínica de mama','Revisión de las mamas por personal capacitado.'],['Termografía mamaria','Estudio de imagen térmica, sin contacto.'],['Ultrasonido mamario','Estudio de imagen para revisar el tejido mamario.'],['Pláticas de prevención','VPH, autoexploración y hábitos de cuidado.'],['Acompañamiento emocional','Grupos, madrinas y orientación psicológica.']];
+const ACTOR={lab:'Lab. Citología Ejemplo',admin:'Lucía · Admin EIRA',medico:'Dra. Rivera · Médica EIRA'};
+
+function seed(){
+  const t=(d,h)=>`${d}T${h||'10:00'}:00-06:00`;
+  return {v:1,seq:101,
+  pacientes:[
+    {id:'P1',folio:'EIRA-0142',nombre:'María Ejemplo López',fnac:'1984-03-12',tel:'33 0000 4821',email:'maria.ejemplo@correo.test',municipio:'Zapotlán el Grande'},
+    {id:'P2',folio:'EIRA-0098',nombre:'María Eugenia Ejemplo López',fnac:'1979-07-02',tel:'33 0000 1177',email:'',municipio:'Zapotlán el Grande'},
+    {id:'P3',folio:'EIRA-0177',nombre:'Ana Prueba Ruiz',fnac:'1990-11-23',tel:'33 0000 6630',email:'ana.prueba@correo.test',municipio:'Tuxpan'}],
+  brigadas:[
+    {id:'B0',nombre:'Brigada Zapotlán · mayo',municipio:'Zapotlán el Grande',fecha:'2026-05-16',servicios:['Citología','Revisión mamaria']},
+    {id:'B1',nombre:'Brigada Zapotlán · noviembre',municipio:'Zapotlán el Grande',fecha:'2026-11-08',servicios:['Citología','Ultrasonido mamario']},
+    {id:'B2',nombre:'Brigada Tuxpan · noviembre',municipio:'Tuxpan',fecha:'2026-11-14',servicios:['Citología','Revisión mamaria','Termografía']},
+    {id:'B3',nombre:'Brigada Zapotlán · diciembre',municipio:'Zapotlán el Grande',fecha:'2026-12-06',servicios:['Citología','Revisión mamaria','Plática de prevención']},
+    {id:'B4',nombre:'Brigada Tuxpan · enero',municipio:'Tuxpan',fecha:'2027-01-17',servicios:['Citología','Ultrasonido mamario']}],
+  visitas:[
+    {id:'V1',pacienteId:'P1',brigadaId:'B0',servicios:['Citología']},
+    {id:'V2',pacienteId:'P1',brigadaId:'B1',servicios:['Citología']},
+    {id:'V3',pacienteId:'P2',brigadaId:'B0',servicios:['Citología','Revisión mamaria']},
+    {id:'V4',pacienteId:'P2',brigadaId:'B1',servicios:['Citología','Ultrasonido mamario']},
+    {id:'V5',pacienteId:'P3',brigadaId:'B2',servicios:['Citología','Revisión mamaria']}],
+  resultados:[
+    {id:'R-0090',pacienteId:'P2',brigadaId:'B0',folioRep:'EIRA-0098',nombreRep:'MARIA EUGENIA EJEMPLO LOPEZ',fnacRep:'1979-07-02',labCat:'negativo',archivo:'sintetico',estado:'cerrado',categoria:'negativo',conducta:'Control de rutina',estudios:[],creado:t('2026-05-28')},
+    {id:'R-0099',pacienteId:'P2',brigadaId:'B1',folioRep:'EIRA-0098',nombreRep:'MA EUGENIA EJEMPLO',fnacRep:'1979-07-02',labCat:'negativo',archivo:'sintetico',estado:'observado',motivo:'Escaneo ilegible. Se pidió una nueva copia al laboratorio.',estudios:[],creado:t('2026-11-17')},
+    {id:'R-0101',pacienteId:'P3',brigadaId:'B2',folioRep:'EIRA-0177',nombreRep:'ANA PRUEBA RUIZ',fnacRep:'1990-11-23',labCat:'ascus',archivo:'sintetico',estado:'notificado',categoria:'ascus',conducta:'Prueba de VPH',estudios:['Prueba de VPH'],creado:t('2026-11-19')}],
+  bitacora:[
+    {t:t('2026-11-20','09:14'),actor:'Lucía · Admin EIRA',accion:'Envió aviso neutro (SMS)',ref:'R-0101'},
+    {t:t('2026-11-19','18:02'),actor:'Dra. Rivera · Médica EIRA',accion:'Autorizó resultado (publicación en línea)',ref:'R-0101'},
+    {t:t('2026-11-17','12:40'),actor:'Lucía · Admin EIRA',accion:'Marcó observado: escaneo ilegible',ref:'R-0099'}],
+  avisos:[{id:'A-1',resId:'R-0101',canal:'SMS',destino:'•• •••• 6630',texto:'Hola, Ana. EIRA tiene un documento disponible para ti. Entra a eira-contigo.mx con tu folio.',t:t('2026-11-20','09:14')}],
+  solicitudes:[]};
+}
+
+let S;
+try{S=JSON.parse(localStorage.getItem(KEY))}catch(e){}
+if(!S||S.v!==1)S=seed();
+function save(){try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}}
+const ui={rol:'lab',at:'bandeja',sel:null,msel:null,brig:null,q:'',hist:null,pac:null,otp:null,pt:'docs',pres:null,tokens:{},modal:null,filtro:'',pf:null,lpf:null};
+
+const pac=id=>S.pacientes.find(p=>p.id===id);
+const brg=id=>S.brigadas.find(b=>b.id===id)||{nombre:'—',municipio:'',fecha:today,servicios:[]};
+const res=id=>S.resultados.find(r=>r.id===id);
+const chip=e=>`<span class="chip ${EST[e][1]}">${EST[e][0]}</span>`;
+const pasadas=()=>S.brigadas.filter(b=>b.fecha<=today).sort((a,b)=>b.fecha.localeCompare(a.fecha));
+const proximas=m=>S.brigadas.filter(b=>b.fecha>today&&(!m||b.municipio===m)).sort((a,b)=>a.fecha.localeCompare(b.fecha));
+function log(accion,ref,actor){S.bitacora.unshift({t:now(),actor:actor||(ui.rol==='paciente'?'Paciente '+(pac(ui.pac)?.folio||''):ACTOR[ui.rol]),accion,ref:ref||''});save()}
+let tt;function toast(m){T.textContent=m;T.classList.add('on');clearTimeout(tt);tt=setTimeout(()=>T.classList.remove('on'),4000)}
+function openModal(title,html){ui.modal={title,html};render()}
+
+const docHTML=r=>`<!DOCTYPE html><html><body style="font:14px/1.5 system-ui,sans-serif;margin:24px;color:#222">
+<div style="position:fixed;inset:0;display:grid;place-items:center;pointer-events:none;font:800 30px system-ui;color:rgba(200,35,111,.16);transform:rotate(-24deg);text-align:center">DOCUMENTO DE PRUEBA<br>DATOS FICTICIOS</div>
+<h2 style="margin:0">Laboratorio de Citología Ejemplo</h2><p style="margin:0 0 16px;color:#666">Solicitud y reporte de citología cervical</p>
+<table style="border-collapse:collapse;width:100%">${[['Folio EIRA',r.folioRep],['Nombre',r.nombreRep],['Fecha de nacimiento',r.fnacRep],['Brigada',brg(r.brigadaId).nombre],['Fecha de toma',brg(r.brigadaId).fecha]].map(([k,v])=>`<tr><td style="padding:6px;border-bottom:1px solid #eee;color:#666;width:40%">${esc(k)}</td><td style="padding:6px;border-bottom:1px solid #eee">${esc(v)}</td></tr>`).join('')}</table>
+<h3>Calidad de la muestra</h3><p>${r.labCat==='inadecuada'?'Insatisfactoria para evaluación':'Satisfactoria para evaluación'}</p>
+<h3>Interpretación (Sistema Bethesda)</h3><p><b>${esc(CATS[r.labCat]?.n||'Ver reporte')}</b></p>
+<p style="color:#666;margin-top:28px">Citotecnólogo: ____________ (ficticio)</p></body></html>`;
+const docFrame=r=>r.archivo==='subido'&&blobs[r.id]
+  ?`<iframe class="doc" src="${blobs[r.id]}" title="Documento ${r.id}"></iframe><p class="fine">${esc(r.archivoNombre)}. Si no se ve, el visor bloquea la vista previa de PDF; en producción se sirve con una URL firmada.</p>`
+  :`<iframe class="doc" srcdoc="${esc(docHTML(r))}" title="Documento ${r.id}"></iframe>`;
+
+/* ---------- LABORATORIO ---------- */
+function viewLab(){
+  const pf=ui.pf||{};
+  return `<h1>Laboratorio</h1><p class="lead">Sube el reporte escaneado. El laboratorio no ve datos de contacto ni lo que pasa después de la carga, solo el estado.</p>
+  <div class="grid2"><form class="card" data-form="upload"><h2>Subir resultado</h2>
+  <label>Brigada<select name="brigada">${pasadas().map(b=>`<option value="${b.id}" ${pf.brigada===b.id?'selected':''}>${esc(b.nombre)}</option>`).join('')}</select></label>
+  <label>Folio EIRA del reporte<input name="folio" required autocomplete="off" value="${esc(pf.folio||'')}"></label>
+  <label>Nombre como viene en el reporte<input name="nombre" required autocomplete="off" value="${esc(pf.nombre||'')}"></label>
+  <label>Fecha de nacimiento del reporte<input type="date" name="fnac" required value="${esc(pf.fnac||'')}"></label>
+  <label>PDF escaneado<input type="file" name="file" accept="application/pdf"></label>
+  <p class="fine">Sin archivo se genera un PDF sintético marcado como prueba.</p>
+  <div class="row"><button type="button" data-act="prefill">Llenar con ejemplo</button><button class="pri">Subir resultado</button></div></form>
+  <div class="card"><h2>Mis cargas</h2><table class="stack"><thead><tr><th>ID</th><th>Folio</th><th>Brigada</th><th>Cargado</th><th>Estado</th></tr></thead><tbody>
+  ${S.resultados.slice().reverse().map(r=>`<tr><td>${r.id}</td><td>${esc(r.folioRep)}</td><td>${esc(brg(r.brigadaId).nombre)}</td><td>${fmtT(r.creado)}</td><td>${chip(r.estado)}</td></tr>`).join('')}
+  </tbody></table></div></div>`;
+}
+
+/* ---------- ADMIN ---------- */
+function cands(r){return S.pacientes.map(p=>{const f=p.folio.toLowerCase()===r.folioRep.toLowerCase(),d=p.fnac===r.fnacRep,n=sim(p.nombre,r.nombreRep);return{p,f,d,n,s:(f?50:0)+(d?30:0)+Math.round(n*20)}}).filter(x=>x.s>=10).sort((a,b)=>b.s-a.s)}
+function viewAdmin(){
+  const nb=S.resultados.filter(r=>['cargado','asociado'].includes(r.estado)).length, na=S.resultados.filter(r=>r.estado==='autorizado').length, ns=S.solicitudes.filter(s=>s.estado==='pendiente').length;
+  const tabs=[['bandeja','Bandeja',nb],['avisos','Avisos',na],['brigadas','Brigadas e historiales',0],['panel','Panel',ns],['bitacora','Bitácora',0]];
+  return `<h1>EIRA · Administración</h1><p class="lead">Asocia cada resultado con confirmación humana, revísalo y avisa a la paciente sin revelar diagnósticos.</p>
+  <div class="tabs">${tabs.map(([k,n,c])=>`<button data-act="at" data-k="${k}" aria-current="${ui.at===k}">${n}${c?` <span class="chip">${c}</span>`:''}</button>`).join('')}</div>
+  ${({bandeja:aBandeja,avisos:aAvisos,brigadas:aBrigadas,panel:aPanel,bitacora:aBitacora})[ui.at]()}`;
+}
+function aBandeja(){
+  const q=S.resultados.filter(r=>['cargado','asociado','observado'].includes(r.estado));
+  const cur=q.find(r=>r.id===ui.sel)||q.find(r=>r.estado!=='observado');
+  return `<div class="grid2"><div class="list">${q.length?q.map(r=>`<button class="item" data-act="sel" data-id="${r.id}" aria-current="${cur===r}"><span><b>${r.id}</b> · ${esc(r.nombreRep)}<br><span class="fine">${esc(brg(r.brigadaId).nombre)}</span></span>${chip(r.estado)}</button>`).join(''):'<p class="muted">No hay pendientes.</p>'}</div>
+  <div class="card">${cur?detBandeja(cur):'<p class="muted">Selecciona un resultado.</p>'}</div></div>`;
+}
+function detBandeja(r){
+  const head=`<div class="row" style="margin:0 0 6px;justify-content:space-between"><h2 style="margin:0">${r.id}</h2>${chip(r.estado)}</div>
+  <p class="fine">Datos del laboratorio: <b>${esc(r.nombreRep)}</b> · folio ${esc(r.folioRep)} · nacimiento ${fmtF(r.fnacRep)}</p>
+  <button data-act="doc" data-id="${r.id}">Ver documento</button>`;
+  if(r.estado==='cargado'){
+    const c=cands(r);
+    return head+`<h3>Asociar a un expediente</h3><p class="fine">El sistema sugiere candidatas por folio, fecha de nacimiento y nombre. Una persona confirma: nunca se asocia en automático.</p>
+    ${c.length?c.map(x=>{const fuerte=x.f&&x.d;return `<div class="cand"><div><b>${esc(x.p.nombre)}</b><br><span class="fine">${x.p.folio} · ${fmtF(x.p.fnac)} · ${esc(x.p.municipio)}</span></div><div class="score" title="Puntaje de coincidencia">${x.s}</div>
+    <div class="full"><span class="chip ${x.f?'o':'w'}">${x.f?'✓':'✗'} Folio</span> <span class="chip ${x.d?'o':'w'}">${x.d?'✓':'✗'} Fecha de nacimiento</span> <span class="chip m">Nombre ${Math.round(x.n*100)}%</span></div>
+    ${fuerte?'':`<label class="full">Justificación obligatoria: el folio o la fecha no coinciden<textarea rows="2" name="just"></textarea></label>`}
+    <div class="full"><button class="${fuerte?'pri':''}" data-act="asociar" data-id="${r.id}" data-p="${x.p.id}">Confirmar que es ella</button></div></div>`}).join(''):'<p class="muted">Sin candidatas.</p>'}
+    <div class="row"><button data-act="obs" data-id="${r.id}">Ninguna coincide: marcar observado</button></div>`;
+  }
+  if(r.estado==='asociado'){
+    const p=pac(r.pacienteId);
+    return head+`<p>Asociado a <b>${esc(p.nombre)}</b> (${p.folio}) con puntaje ${r.matchScore}.</p>
+    <form data-form="revision" data-id="${r.id}"><h3>Revisión administrativa</h3>
+    <label style="font-weight:400"><input type="checkbox" name="c1">El documento es legible</label>
+    <label style="font-weight:400"><input type="checkbox" name="c2">Los datos del reporte están completos</label>
+    <label style="font-weight:400"><input type="checkbox" name="c3">Es el documento correcto para esta paciente</label>
+    <div class="row"><button class="pri">Aprobar revisión</button><button type="button" data-act="obs" data-id="${r.id}">Marcar observado</button></div></form>`;
+  }
+  return head+`<div class="notice"><b>Observado.</b> ${esc(r.motivo||'')}</div>`;
+}
+function textoAviso(r,canal){
+  const p=pac(r.pacienteId),n=p.nombre.split(' ')[0];
+  if(canal==='Entrega asistida')return `Entrega asistida: ${p.nombre} recibirá su documento en la sede de EIRA o en la próxima brigada, con verificación de identidad.`;
+  if(r.acompanada)return `Hola, ${n}. EIRA quiere ponerse en contacto contigo para agendar una cita. Te llamaremos pronto.`;
+  return `Hola, ${n}. EIRA tiene un documento disponible para ti. Entra a eira-contigo.mx con tu folio.`;
+}
+function aAvisos(){
+  const q=S.resultados.filter(r=>r.estado==='autorizado');
+  return `<div class="grid2"><div class="card"><h2>Por avisar</h2>${q.length?q.map(r=>{const p=pac(r.pacienteId);return `<form class="cand" data-form="aviso" data-id="${r.id}"><div class="full"><b>${esc(p.nombre)}</b> · ${r.id} ${r.acompanada?'<span class="chip w">Entrega acompañada</span>':''}<br><span class="fine">Tel. ${maskTel(p.tel)} · ${p.email?'correo registrado':'sin correo'}</span></div>
+    <label class="full">Canal<select name="canal"><option>SMS</option>${p.email?'<option>Correo</option>':''}<option>Entrega asistida</option></select></label>
+    <p class="full code">${esc(textoAviso(r,'SMS'))}</p><div class="full"><button class="pri">Enviar aviso</button></div></form>`}).join(''):'<p class="muted">No hay resultados autorizados pendientes de aviso.</p>'}</div>
+  <div class="card"><h2>Avisos enviados</h2><p class="fine">Ningún aviso incluye diagnóstico, hallazgos ni archivos adjuntos.</p>${S.avisos.map(a=>`<div class="cand"><div class="full"><span class="chip">${esc(a.canal)}</span> ${esc(a.destino)} · <span class="fine">${fmtT(a.t)} · ${a.resId}</span></div><p class="full code">${esc(a.texto)}</p></div>`).join('')||'<p class="muted">Aún no hay avisos.</p>'}</div></div>`;
+}
+function aBrigadas(){
+  const b=S.brigadas.find(x=>x.id===ui.brig);
+  const q=ui.q.toLowerCase();
+  const found=q?S.pacientes.filter(p=>p.folio.toLowerCase().includes(q)||sim(p.nombre,ui.q)>0):[];
+  return `<div class="grid2"><div>
+  <form class="card" data-form="buscar"><h2>Recuperar historial</h2><label>Folio o nombre<input name="q" value="${esc(ui.q)}" placeholder="EIRA-0142 o María"></label><div class="row"><button class="pri">Buscar</button></div>
+  ${found.map(p=>`<button type="button" class="item" data-act="hist" data-p="${p.id}" style="margin-top:8px"><span><b>${esc(p.nombre)}</b><br><span class="fine">${p.folio} · ${esc(p.municipio)}</span></span><span class="chip">${S.visitas.filter(v=>v.pacienteId===p.id).length} visitas</span></button>`).join('')}
+  ${q&&!found.length?'<p class="muted">Sin coincidencias.</p>':''}</form>
+  <h3>Brigadas</h3><div class="list">${S.brigadas.slice().sort((x,y)=>y.fecha.localeCompare(x.fecha)).map(x=>`<button class="item" data-act="brig" data-id="${x.id}" aria-current="${b===x&&!ui.hist}"><span><b>${esc(x.nombre)}</b><br><span class="fine">${esc(x.municipio)} · ${fmtF(x.fecha)}</span></span>${x.fecha>today?'<span class="chip m">Próxima</span>':`<span class="chip">${S.visitas.filter(v=>v.brigadaId===x.id).length} atendidas</span>`}</button>`).join('')}</div>
+  <form class="card" data-form="brigada" style="margin-top:14px"><h2>Registrar brigada</h2><label>Nombre<input name="nombre" required placeholder="Brigada Zapotiltic · febrero"></label><label>Municipio<input name="municipio" required></label><label>Fecha<input type="date" name="fecha" required></label>
+  <fieldset style="border:0;padding:0;margin:10px 0 0"><legend class="fine">Servicios</legend>${SERV_B.map(s=>`<label style="font-weight:400"><input type="checkbox" name="serv" value="${s}">${s}</label>`).join('')}</fieldset>
+  <div class="row"><button class="pri">Registrar brigada</button></div></form></div>
+  <div class="card">${ui.hist?historial(ui.hist,true):b?detBrig(b):'<p class="muted">Elige una brigada para recuperar los historiales de las pacientes que atendió, o busca a una paciente por folio o nombre.</p>'}</div></div>`;
+}
+function detBrig(b){
+  const vs=S.visitas.filter(v=>v.brigadaId===b.id);
+  return `<h2>${esc(b.nombre)}</h2><p class="fine">${esc(b.municipio)} · ${fmtF(b.fecha)} · ${b.servicios.map(esc).join(', ')}</p>
+  <table class="stack"><thead><tr><th>Paciente</th><th>Servicios</th><th>Resultado</th><th>Historial</th></tr></thead><tbody>
+  ${vs.map(v=>{const p=pac(v.pacienteId),r=S.resultados.filter(r=>r.pacienteId===p.id&&r.brigadaId===b.id).pop();return `<tr><td><b>${esc(p.nombre)}</b><br><span class="fine">${p.folio}</span></td><td>${v.servicios.map(esc).join(', ')}</td><td>${r?chip(r.estado):'<span class="fine">Sin resultado</span>'}</td><td><button data-act="hist" data-p="${p.id}">Ver</button></td></tr>`}).join('')||'<tr><td colspan="4" class="muted">Aún no hay atenciones registradas.</td></tr>'}
+  </tbody></table>
+  ${b.fecha<=today?`<form data-form="atencion" data-id="${b.id}"><h3>Registrar atención en esta brigada</h3><label>Folio de la paciente<input name="folio" required placeholder="EIRA-0177"></label><label>Servicio<select name="serv">${b.servicios.map(s=>`<option>${esc(s)}</option>`).join('')}</select></label><div class="row"><button class="pri">Registrar atención</button></div></form>`:'<div class="notice">Brigada próxima: las pacientes de este municipio la ven en "Servicios EIRA".</div>'}`;
+}
+function historial(pid,admin){
+  const p=pac(pid);
+  const vs=S.visitas.filter(v=>v.pacienteId===pid).map(v=>({v,b:brg(v.brigadaId)})).sort((x,y)=>y.b.fecha.localeCompare(x.b.fecha));
+  return `${admin?`<button data-act="hist" data-p="">← Volver</button><h2 style="margin-top:12px">${esc(p.nombre)}</h2><p class="fine">${p.folio} · ${edad(p.fnac)} años · ${esc(p.municipio)}</p>`:''}
+  ${vs.map(({v,b})=>{const rs=S.resultados.filter(r=>r.pacienteId===pid&&r.brigadaId===b.id&&(admin||VISIBLE.includes(r.estado)));return `<div class="cand"><div class="full"><b>${esc(b.nombre)}</b><br><span class="fine">${fmtF(b.fecha)} · ${esc(b.municipio)}</span></div><div class="full">${v.servicios.map(s=>`<span class="chip m">${esc(s)}</span>`).join(' ')} ${rs.map(r=>`<span class="fine">${r.id}</span> ${chip(r.estado)}`).join(' ')}</div></div>`}).join('')||'<p class="muted">Sin visitas registradas.</p>'}`;
+}
+function aPanel(){
+  const rs=S.resultados.filter(r=>!ui.filtro||r.brigadaId===ui.filtro);
+  const ks=['cargado','asociado','revisado','observado','rechazado','autorizado','notificado','consultado','cerrado'];
+  return `<label style="max-width:380px">Filtrar por brigada<select data-filter="1"><option value="">Todas las brigadas</option>${S.brigadas.map(b=>`<option value="${b.id}" ${ui.filtro===b.id?'selected':''}>${esc(b.nombre)}</option>`).join('')}</select></label>
+  <div class="kpis">${ks.map(k=>`<div class="kpi"><b>${rs.filter(r=>r.estado===k).length}</b>${EST[k][0]}</div>`).join('')}</div>
+  <div class="grid2"><div class="card"><h2>Solicitudes de apoyo</h2>${S.solicitudes.map(s=>{const p=pac(s.pacienteId);return `<div class="cand"><div class="full"><b>${esc(p.nombre)}</b> · ${esc(s.tipo)}<br><span class="fine">${fmtT(s.t)} · Tel. ${maskTel(p.tel)}</span></div><div class="full">${s.estado==='pendiente'?`<button data-act="atender" data-id="${s.id}">Marcar atendida</button>`:'<span class="chip o">Atendida</span>'}</div></div>`}).join('')||'<p class="muted">Sin solicitudes.</p>'}</div>
+  <div class="card"><h2>Resultados</h2><table class="stack"><thead><tr><th>ID</th><th>Paciente</th><th>Brigada</th><th>Estado</th><th>Días</th></tr></thead><tbody>${rs.slice().reverse().map(r=>{const d=Math.max(0,Math.floor((Date.now()-new Date(r.creado))/864e5));return `<tr><td>${r.id}</td><td>${esc(pac(r.pacienteId)?.nombre||'Sin asociar')}</td><td>${esc(brg(r.brigadaId).nombre)}</td><td>${chip(r.estado)}</td><td>${d}${d>3&&!['cerrado','consultado','notificado'].includes(r.estado)?' <span class="chip w">Atorado</span>':''}</td></tr>`}).join('')}</tbody></table></div></div>`;
+}
+function aBitacora(){return `<div class="card"><h2>Bitácora</h2><p class="fine">Registro de solo inserción: quién hizo qué, cuándo y sobre qué resultado.</p><table class="stack"><thead><tr><th>Fecha</th><th>Quién</th><th>Acción</th><th>Ref.</th></tr></thead><tbody>${S.bitacora.map(l=>`<tr><td>${fmtT(l.t)}</td><td>${esc(l.actor)}</td><td>${esc(l.accion)}</td><td>${esc(l.ref)}</td></tr>`).join('')}</tbody></table></div>`}
+
+/* ---------- MÉDICA ---------- */
+function reglas(p){const o=[],e=edad(p.fnac);if(e>=40&&!S.visitas.some(v=>v.pacienteId===p.id&&v.servicios.includes('Revisión mamaria')))o.push(['Revisión mamaria EIRA',`Regla de ejemplo: ${e} años y sin revisión mamaria en su historial`]);return o}
+function viewMedico(){
+  const q=S.resultados.filter(r=>r.estado==='revisado');
+  const r=q.find(x=>x.id===ui.msel)||q[0];
+  return `<h1>Autorización clínica</h1><p class="lead">Hasta que autorices, la paciente no ve nada. Tú decides la categoría, la conducta y los estudios; el sistema solo sugiere.</p>
+  ${q.length>1?`<div class="row" style="margin:0 0 12px">${q.map(x=>`<button data-act="msel" data-id="${x.id}" aria-current="${x===r}">${x.id}</button>`).join('')}</div>`:''}
+  ${r?formMed(r):'<div class="card"><p class="muted">No hay resultados pendientes de autorizar.</p></div>'}`;
+}
+function formMed(r){
+  const p=pac(r.pacienteId),sug=reglas(p);
+  return `<div class="grid2 g-med"><div class="card"><h2>${r.id} · ${esc(p.nombre)}</h2><p class="fine">${p.folio} · ${edad(p.fnac)} años · ${esc(brg(r.brigadaId).nombre)}</p>${docFrame(r)}</div>
+  <form class="card" data-form="autorizar" data-id="${r.id}"><h2>Dictamen</h2>
+  <label>Categoría del resultado<select name="categoria" required><option value="">Elige…</option>${Object.entries(CATS).map(([k,c])=>`<option value="${k}">${esc(c.n)}</option>`).join('')}</select></label>
+  <label>Conducta a seguir<select name="conducta" required><option value="">Elige…</option>${CONDUCTAS.map(c=>`<option>${c}</option>`).join('')}</select></label>
+  <p class="fine">Al elegir la categoría se propone una conducta; tú la confirmas o la cambias.</p>
+  <fieldset style="border:0;padding:0;margin:8px 0 0"><legend style="font-weight:600;font-size:14px">Estudios recomendados</legend>
+  ${ESTUDIOS.map(e=>{const s=sug.find(x=>x[0]===e);return `<label style="font-weight:400"><input type="checkbox" name="estudios" value="${e}">${e}${s?` <span class="chip">Sugerido</span><br><span class="fine" style="margin-left:28px;display:block">${esc(s[1])}</span>`:''}</label>`}).join('')}</fieldset>
+  <label>Nota clínica privada (la paciente no la ve)<textarea name="nota" rows="2"></textarea></label>
+  <label style="font-weight:400"><input type="checkbox" name="acompanada">Entrega acompañada: no se publica en línea, EIRA la entrega en persona</label>
+  <div class="row"><button class="pri">Autorizar</button><button type="button" data-act="rechazar" data-id="${r.id}">Pedir repetir estudio</button></div></form></div>`;
+}
+
+/* ---------- PACIENTE ---------- */
+function viewPaciente(){
+  if(!ui.pac)return `<div class="phone">${ui.otp?otpView():loginView()}</div>`;
+  const p=pac(ui.pac);
+  const tabs=[['docs','Mis resultados'],['hist','Mi historial'],['serv','Servicios EIRA']];
+  return `<div class="phone"><div class="row" style="justify-content:space-between;margin:0 0 8px"><h1 style="margin:0">Hola, ${esc(p.nombre.split(' ')[0])}</h1><button data-act="salir">Salir</button></div>
+  <div class="tabs">${tabs.map(([k,n])=>`<button data-act="pt" data-k="${k}" aria-current="${ui.pt===k}">${n}</button>`).join('')}</div>
+  ${ui.pt==='docs'?(ui.pres&&res(ui.pres)?resDetalle(res(ui.pres)):misDocs(p)):ui.pt==='hist'?`<div class="card"><h2>Mi historial por brigada</h2>${historial(p.id,false)}</div>`:servicios(p)}</div>`;
+}
+function loginView(){const l=ui.lpf||{};return `<form class="card" data-form="login"><h1>Mis resultados EIRA</h1><p class="muted">Entra con tu folio y tu fecha de nacimiento. Te enviaremos un código a tu teléfono.</p>
+  <label>Folio EIRA<input name="folio" required autocomplete="off" placeholder="EIRA-0000" value="${esc(l.folio||'')}"></label><label>Fecha de nacimiento<input type="date" name="fnac" required value="${esc(l.fnac||'')}"></label>
+  <div class="row"><button class="pri">Recibir código</button><button type="button" data-act="demopac">Usar paciente de ejemplo</button></div>
+  <p class="fine">¿No tienes teléfono propio ni correo? Puedes recibir tu resultado en la sede de EIRA o en la próxima brigada, con una persona que te acompañe.</p></form>`}
+function otpView(){const p=pac(ui.otp.pid);return `<form class="card" data-form="otp"><h1>Revisa tu teléfono</h1><p class="muted">Enviamos un código de 6 dígitos al ${maskTel(p.tel)}. Vence en 10 minutos.</p>
+  <div class="notice"><b>Modo demo:</b> el código es <span class="code">${ui.otp.code}</span></div>
+  <label>Código<input name="code" inputmode="numeric" maxlength="6" required autocomplete="one-time-code"></label>
+  <div class="row"><button class="pri">Entrar</button><button type="button" data-act="salir">Cancelar</button></div></form>`}
+function misDocs(p){const rs=S.resultados.filter(r=>r.pacienteId===p.id&&VISIBLE.includes(r.estado)).reverse();
+  return rs.length?`<div class="list">${rs.map(r=>`<button class="item" data-act="pres" data-id="${r.id}"><span><b>Citología cervical</b><br><span class="fine">${esc(brg(r.brigadaId).nombre)} · ${fmtF(brg(r.brigadaId).fecha)}</span></span><span class="chip ${['consultado','cerrado'].includes(r.estado)?'m':''}">${['consultado','cerrado'].includes(r.estado)?'Visto':'Nuevo'}</span></button>`).join('')}</div>`
+  :`<div class="card"><p>Aún no tienes documentos disponibles. Te avisaremos por SMS o correo cuando haya uno, sin incluir detalles del resultado.</p></div>`}
+function resDetalle(r){
+  const p=pac(r.pacienteId),c=CATS[r.categoria]||CATS.negativo,ed=EDU[c.g],tk=ui.tokens[r.id],vivo=tk&&tk.exp>Date.now();
+  const prox=proximas(p.municipio)[0],apoyo=APOYO.filter(a=>!a.municipio||a.municipio===p.municipio),hist=HISTORIAS.filter(h=>h.g===c.g);
+  return `<button data-act="pres" data-id="">← Mis resultados</button>
+  <article class="card res" style="margin-top:12px"><h2>Citología cervical</h2><p class="fine">${esc(brg(r.brigadaId).nombre)} · revisado y autorizado por personal médico de EIRA</p>
+  ${r.acompanada?`<div class="notice"><b>Tu resultado está listo.</b> Alguien de EIRA te va a llamar para entregártelo en persona y acompañarte en lo que sigue. No tienes que hacer nada más por ahora.</div>`:`
+  <div class="notice"><b>Tu documento</b><br><span class="fine">Se abre con un enlace seguro que vence en 5 minutos. Solo funciona con tu sesión.</span>
+  <div class="row">${vivo?`<button class="pri" data-act="abrir" data-id="${r.id}">Abrir documento</button><span class="fine">Vence en <b data-exp="${tk.exp}">5:00</b></span>`:`<button class="pri" data-act="enlace" data-id="${r.id}">${tk?'Generar un enlace nuevo':'Ver mi resultado'}</button>`}</div>
+  ${vivo?`<p class="code" style="margin-top:10px">eira-contigo.mx/r/${r.id}?token=${tk.tok}&amp;expira=300s</p>`:''}</div>
+  <section><h3>Qué significa</h3><p><b>${esc(ed.t)}</b></p><p>${esc(ed.b)}</p><p class="fine">Texto de ejemplo. En producción lo redacta y aprueba el equipo médico de EIRA.</p></section>`}
+  <section><h3>Qué sigue</h3>${r.acompanada?'<p>EIRA te explicará los siguientes pasos en tu cita.</p>':`<p>Tu médica indicó: <b>${esc(r.conducta)}</b></p>${r.estudios.length?`<p style="margin-bottom:0">Estudios recomendados para ti:</p><ul>${r.estudios.map(e=>`<li>${esc(e)}</li>`).join('')}</ul>`:''}`}
+  ${prox?`<div class="cand"><div><b>${esc(prox.nombre)}</b><br><span class="fine">${fmtF(prox.fecha)} · ${prox.servicios.map(esc).join(', ')}</span></div><button data-act="apartar" data-id="${prox.id}">Apartar mi lugar</button></div>`:''}</section>
+  <section><h3>No estás sola</h3>
+  ${hist.map(h=>`<div class="cand"><div class="full">“${esc(h.t)}”</div><div class="full fine">${esc(h.a)} · Historia de ejemplo ficticia. En producción solo se publican historias compartidas con consentimiento.</div></div>`).join('')}
+  ${apoyo.map(a=>`<div class="cand"><div><b>${esc(a.n)}</b><br><span class="fine">${esc(a.tipo)} · ${esc(a.d)}</span>${a.tel?`<br><a href="tel:${a.tel.replace(/\s/g,'')}">${esc(a.tel)}</a>`:''}</div>${a.real?'<span class="chip o">Servicio real</span>':'<span class="chip m">Ejemplo</span>'}</div>`).join('')}
+  <div class="row"><button class="pri" data-act="hablar" data-id="${r.id}">Quiero hablar con alguien de EIRA</button></div>
+  <p class="fine">Si estás en peligro inmediato, llama al 911.</p></section>
+  <section><h3>Prevención para ti y las tuyas</h3><ul>${PREV.map(x=>`<li>${esc(x)}</li>`).join('')}</ul></section></article>`;
+}
+function servicios(p){const pr=proximas(p.municipio);return `<div class="card"><h2>Servicios EIRA</h2><p class="fine">Información de servicios. Catálogo de ejemplo: EIRA confirma qué se ofrece en cada brigada.</p>
+  <div class="svc">${SERVICIOS.map(([n,d])=>`<div class="cand"><div class="full"><b>${esc(n)}</b><br><span class="fine">${esc(d)}</span></div></div>`).join('')}</div>
+  <h3>Próximas brigadas en ${esc(p.municipio)}</h3>${pr.length?pr.map(b=>`<div class="cand"><div class="full"><b>${esc(b.nombre)}</b> · ${fmtF(b.fecha)}<br><span class="fine">${b.servicios.map(esc).join(', ')}</span></div></div>`).join(''):'<p class="muted">Aún no hay brigadas programadas en tu municipio.</p>'}</div>`}
+
+/* ---------- RENDER Y EVENTOS ---------- */
+const V={lab:viewLab,admin:viewAdmin,medico:viewMedico,paciente:viewPaciente};
+function render(){
+  app.innerHTML=V[ui.rol]()+(ui.modal?`<div class="modal"><div class="card" role="dialog" aria-modal="true" aria-label="${esc(ui.modal.title)}"><div class="row" style="justify-content:space-between;margin:0 0 10px"><h2 style="margin:0">${esc(ui.modal.title)}</h2><button data-act="close" aria-label="Cerrar">✕</button></div>${ui.modal.html}</div></div>`:'');
+  document.querySelectorAll('nav.roles button[data-r]').forEach(b=>b.setAttribute('aria-current',String(b.dataset.r===ui.rol)));
+}
+const ACT={
+  rol:b=>{ui.rol=b.dataset.r;ui.modal=null;render();scrollTo(0,0)},
+  reset:()=>{S=seed();save();Object.assign(ui,{at:'bandeja',sel:null,msel:null,brig:null,q:'',hist:null,pac:null,otp:null,pt:'docs',pres:null,tokens:{},modal:null,filtro:'',pf:null,lpf:null});toast('Demo reiniciada.');render()},
+  prefill:()=>{ui.pf={brigada:'B1',folio:'EIRA-0142',nombre:'MARIA EJEMPLO LOPEZ',fnac:'1984-03-12'};render()},
+  at:b=>{ui.at=b.dataset.k;render()},
+  sel:b=>{ui.sel=b.dataset.id;render()},
+  msel:b=>{ui.msel=b.dataset.id;render()},
+  doc:b=>{const r=res(b.dataset.id);openModal('Documento '+r.id,docFrame(r))},
+  close:()=>{ui.modal=null;render()},
+  obs:b=>openModal('Marcar como observado',`<form data-form="obs" data-id="${b.dataset.id}"><label>Motivo (lo verá el laboratorio)<textarea name="motivo" rows="3" required></textarea></label><div class="row"><button class="pri">Marcar observado</button><button type="button" data-act="close">Cancelar</button></div></form>`),
+  asociar:b=>{const r=res(b.dataset.id),x=cands(r).find(x=>x.p.id===b.dataset.p),just=b.closest('.cand').querySelector('textarea')?.value.trim();
+    if(!(x.f&&x.d)&&!just){toast('Escribe la justificación: el folio o la fecha no coinciden.');return}
+    Object.assign(r,{pacienteId:x.p.id,estado:'asociado',matchScore:x.s,just:just||''});log(`Asoció a ${x.p.folio} (puntaje ${x.s})${just?' con justificación':''}`,r.id);toast('Asociado. Falta la revisión administrativa.');render()},
+  rechazar:b=>{const r=res(b.dataset.id);r.estado='rechazado';log('Pidió repetir el estudio',r.id);toast('Se pidió repetir el estudio. EIRA contactará a la paciente.');render()},
+  brig:b=>{ui.brig=b.dataset.id;ui.hist=null;render()},
+  hist:b=>{ui.at='brigadas';ui.hist=b.dataset.p||null;render()},
+  atender:b=>{const s=S.solicitudes.find(s=>s.id===b.dataset.id);s.estado='atendida';log('Atendió solicitud de apoyo',s.id);render()},
+  demopac:()=>{ui.lpf={folio:'EIRA-0142',fnac:'1984-03-12'};render()},
+  salir:()=>{if(ui.pac)log('Cerró sesión');Object.assign(ui,{pac:null,otp:null,pres:null,lpf:null,tokens:{}});render()},
+  pt:b=>{ui.pt=b.dataset.k;ui.pres=null;render()},
+  pres:b=>{ui.pres=b.dataset.id||null;render();scrollTo(0,0)},
+  enlace:b=>{const id=b.dataset.id,tok=Array.from(crypto.getRandomValues(new Uint8Array(8)),x=>x.toString(16).padStart(2,'0')).join('');ui.tokens[id]={tok,exp:Date.now()+300000};log('Generó enlace firmado de 5 minutos',id);render()},
+  abrir:b=>{const r=res(b.dataset.id),tk=ui.tokens[r.id];if(!tk||tk.exp<Date.now()){toast('El enlace venció. Genera uno nuevo.');render();return}
+    if(['autorizado','notificado'].includes(r.estado))r.estado='consultado';log('Abrió su resultado con enlace firmado',r.id);openModal('Tu resultado',docFrame(r))},
+  hablar:b=>{S.solicitudes.unshift({id:uid('S'),pacienteId:ui.pac,tipo:'Quiere hablar con alguien de EIRA',t:now(),estado:'pendiente'});log('Pidió hablar con alguien de EIRA',b.dataset.id);toast('Listo. Alguien de EIRA te va a contactar pronto.')},
+  apartar:b=>{const x=brg(b.dataset.id);S.solicitudes.unshift({id:uid('S'),pacienteId:ui.pac,tipo:'Apartar lugar en '+x.nombre,t:now(),estado:'pendiente'});log('Pidió apartar lugar en brigada',x.id);toast(`Pedimos tu lugar en ${x.nombre}. EIRA te confirmará.`)}
+};
+const FORM={
+  upload:(f,fd)=>{const file=fd.get('file'),id='R-0'+(++S.seq);
+    const r={id,pacienteId:null,brigadaId:fd.get('brigada'),folioRep:fd.get('folio').trim(),nombreRep:fd.get('nombre').trim(),fnacRep:fd.get('fnac'),labCat:ui.pf?'lsil':'negativo',archivo:'sintetico',estado:'cargado',estudios:[],creado:now()};
+    if(file&&file.size){r.archivo='subido';r.archivoNombre=file.name;blobs[id]=URL.createObjectURL(file)}
+    S.resultados.push(r);ui.pf=null;log('Subió resultado escaneado',id);toast(`${id} cargado. Pasa a la bandeja de EIRA para asociarlo.`);render()},
+  obs:(f,fd)=>{const r=res(f.dataset.id);r.estado='observado';r.motivo=fd.get('motivo').trim();ui.modal=null;log('Marcó observado: '+r.motivo,r.id);render()},
+  revision:(f,fd)=>{if(!(fd.get('c1')&&fd.get('c2')&&fd.get('c3'))){toast('Marca las tres verificaciones o márcalo como observado.');return}
+    const r=res(f.dataset.id);r.estado='revisado';log('Aprobó revisión administrativa',r.id);toast('Revisado. Pasa a la cola de la médica.');render()},
+  autorizar:(f,fd)=>{const r=res(f.dataset.id),cat=fd.get('categoria');if(!cat||!fd.get('conducta')){toast('Elige categoría y conducta.');return}
+    Object.assign(r,{categoria:cat,conducta:fd.get('conducta'),estudios:fd.getAll('estudios'),nota:fd.get('nota'),acompanada:!!fd.get('acompanada')||CATS[cat].g==='acompanada',estado:'autorizado'});
+    log('Autorizó resultado ('+(r.acompanada?'entrega acompañada':'publicación en línea')+')',r.id);toast('Autorizado. EIRA ya puede enviar el aviso.');render()},
+  aviso:(f,fd)=>{const r=res(f.dataset.id),p=pac(r.pacienteId),canal=fd.get('canal');
+    S.avisos.unshift({id:uid('A'),resId:r.id,canal,destino:canal==='Correo'?p.email.replace(/^(.).*@/,'$1•••@'):canal==='SMS'?maskTel(p.tel):'Sede EIRA',texto:textoAviso(r,canal),t:now()});
+    r.estado='notificado';log(`Envió aviso neutro (${canal})`,r.id);toast('Aviso enviado, sin diagnóstico.');render()},
+  buscar:(f,fd)=>{ui.q=fd.get('q').trim();ui.hist=null;render()},
+  brigada:(f,fd)=>{const b={id:uid('B'),nombre:fd.get('nombre').trim(),municipio:fd.get('municipio').trim(),fecha:fd.get('fecha'),servicios:fd.getAll('serv')};if(!b.servicios.length)b.servicios=['Citología'];S.brigadas.push(b);ui.brig=b.id;ui.hist=null;log('Registró brigada '+b.nombre,b.id);toast('Brigada registrada.');render()},
+  atencion:(f,fd)=>{const b=brg(f.dataset.id),folio=fd.get('folio').trim().toLowerCase(),s=fd.get('serv'),p=S.pacientes.find(p=>p.folio.toLowerCase()===folio);
+    if(!p){toast('No existe ese folio. Verifícalo con la paciente.');return}
+    const v=S.visitas.find(v=>v.pacienteId===p.id&&v.brigadaId===b.id);if(v){if(!v.servicios.includes(s))v.servicios.push(s)}else S.visitas.push({id:uid('V'),pacienteId:p.id,brigadaId:b.id,servicios:[s]});
+    log(`Registró atención (${s}) de ${p.folio}`,b.id);toast('Atención registrada en el historial.');render()},
+  login:(f,fd)=>{const folio=fd.get('folio').trim().toLowerCase(),p=S.pacientes.find(p=>p.folio.toLowerCase()===folio&&p.fnac===fd.get('fnac'));
+    if(!p){log('Intento de acceso fallido','','Acceso de paciente');toast('Los datos no coinciden. Revisa tu folio y tu fecha de nacimiento.');return}
+    ui.otp={pid:p.id,code:String(100000+crypto.getRandomValues(new Uint32Array(1))[0]%900000)};log('Envió código de acceso por SMS','',`Paciente ${p.folio}`);render()},
+  otp:(f,fd)=>{if(fd.get('code').trim()!==ui.otp.code){toast('Código incorrecto.');return}ui.pac=ui.otp.pid;ui.otp=null;ui.pt='docs';ui.pres=null;log('Inició sesión con código');render()}
+};
+document.addEventListener('click',e=>{const b=e.target.closest('[data-act]');if(b&&ACT[b.dataset.act]){e.preventDefault();ACT[b.dataset.act](b)}});
+document.addEventListener('submit',e=>{const f=e.target.closest('form[data-form]');if(!f)return;e.preventDefault();FORM[f.dataset.form]?.(f,new FormData(f))});
+document.addEventListener('change',e=>{const t=e.target;
+  if(t.name==='categoria'&&t.form){const c=CATS[t.value];if(c){t.form.elements.conducta.value=c.c;t.form.elements.acompanada.checked=c.g==='acompanada'}}
+  if(t.name==='canal'&&t.form){t.form.querySelector('.code').textContent=textoAviso(res(t.form.dataset.id),t.value)}
+  if(t.dataset.filter){ui.filtro=t.value;render()}});
+document.addEventListener('keydown',e=>{if(e.key==='Escape'&&ui.modal){ui.modal=null;render()}});
+setInterval(()=>{let fin=false;document.querySelectorAll('[data-exp]').forEach(el=>{const ms=+el.dataset.exp-Date.now();if(ms<=0)fin=true;else{const s=Math.ceil(ms/1000);el.textContent=Math.floor(s/60)+':'+String(s%60).padStart(2,'0')}});if(fin)render()},1000);
+render();
+}
+</script>
 </body>
 </html>

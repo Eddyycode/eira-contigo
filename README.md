@@ -1,114 +1,60 @@
 # EIRA Contigo
 
-Entrega segura de resultados de Papanicolaou, con acompañamiento después del resultado.
+Entrega digital segura de resultados de Papanicolaou, con acompañamiento para la paciente.
+**Reto 4 · Nerdearla Vibeathon by Devin · para EIRA Movimiento Rosa A.C.**
 
-Prototipo para el **Reto 4** de la **Nerdearla Vibeathon by Devin**, para **EIRA Movimiento Rosa A.C.**
+> ⚠️ Prototipo. **Todos los datos son ficticios.** No usar con datos reales de pacientes. Cualquier uso clínico requiere la revisión posterior de EIRA.
 
-> **Aviso:** TODOS los datos de este repositorio (pacientes, folios, resultados, PDFs, testimonios y recursos de apoyo) son **ficticios**. La única excepción es la Línea de la Vida (800 911 2000), que es real.
+## El problema
+Hoy EIRA recibe los resultados impresos, los escanea, los asocia a cada paciente por su nombre y los manda por WhatsApp (más de 300 al mes). Cuando bloquean la cuenta, las entregas se detienen. La revisión no queda documentada, no hay control de acceso y la paciente recibe un PDF suelto, sin explicación.
 
-## Qué problema resuelve
+## Qué hace
+**Núcleo (lo que pide el reto)**
+1. **Laboratorio:** sube el PDF escaneado con los datos tal como vienen en el reporte.
+2. **Admin EIRA:** el sistema sugiere expedientes con un puntaje de coincidencia (folio, fecha de nacimiento y nombre) y **una persona confirma**. Nunca se asocia en automático, y si el folio o la fecha no coinciden se exige una justificación. Después viene una revisión administrativa con lista de verificación.
+3. **Médica:** autoriza el resultado y asigna categoría (Bethesda simplificado), conducta a seguir y estudios recomendados. El sistema sugiere estudios con reglas configurables, pero la médica confirma. Los resultados graves se marcan como **entrega acompañada**: no se publican en línea y se entregan en persona.
+4. **Aviso neutro** por SMS o correo, **sin diagnóstico**. Para pacientes sin teléfono propio o sin conectividad hay entrega asistida.
+5. **Paciente:** entra con folio, fecha de nacimiento y un código OTP. El documento se abre con un **enlace firmado que vence en 5 minutos**; no hay enlaces públicos.
+6. **Bitácora** de solo inserción: quién hizo qué, cuándo y sobre qué resultado. Además, un panel de estados con resultados atorados.
 
-Hoy el laboratorio entrega a EIRA los resultados impresos. EIRA los escanea, los asocia a cada paciente por su nombre y se los manda por WhatsApp (más de 300 al mes). Esto tiene varios problemas:
+**Acompañamiento ("Después de tu resultado")**
+- Qué significa el resultado, en lenguaje claro y con texto aprobado por EIRA.
+- Qué sigue: la conducta indicada, los estudios recomendados y la opción de apartar lugar en la próxima brigada.
+- No estás sola: historias compartidas **con consentimiento** (nunca datos de otras pacientes), grupos de apoyo, terapia, madrinas, Línea de la Vida (800 911 2000) y el botón "Quiero hablar con alguien de EIRA".
+- Contenido de prevención.
 
-- **Las entregas dependen de WhatsApp.** Si bloquean la cuenta, se detienen.
-- **No hay control de acceso ni registro.** La revisión no queda documentada y no hay seguimiento.
-- **La asociación es manual y por nombre.** Es fácil confundir a dos pacientes con nombres parecidos.
-- **La paciente recibe un PDF suelto.** No trae explicación ni le dice a quién acudir.
+**Brigadas e historiales**
+- Registro de brigadas por municipio y fecha, con sus servicios.
+- Recuperación del historial de cada paciente por brigada, o buscándola por folio o nombre.
+- La paciente ve su propio historial y el catálogo de **Servicios EIRA** con las próximas brigadas de su municipio. Esta sección es solo informativa.
 
-EIRA Contigo sustituye ese proceso por un flujo trazable:
-
-```
-carga (lab) → asociación verificada (admin) → revisión administrativa (admin)
-→ autorización clínica (médico) → aviso neutro → acceso autenticado (paciente) → bitácora
-```
-
-- Una persona confirma cada asociación; **el sistema nunca asocia en automático**.
-- La paciente **no ve nada hasta que el médico autoriza**.
-- El aviso es neutro: sin diagnóstico, sin hallazgos y sin adjuntos.
-- Las descargas usan **URLs firmadas que vencen en 5 minutos**. Nunca hay enlaces públicos.
-- Cada acción queda en una **bitácora que solo admite inserciones**.
-- Después del resultado, la paciente ve una explicación en lenguaje claro aprobada por EIRA, los estudios recomendados por el médico, espacios seguros para hablar y su red de apoyo.
-
-**Si mañana bloquean WhatsApp, las entregas siguen.**
-
-## Cómo correr el demo
-
-El demo es estático y **no necesita credenciales** ni backend. Usa una de estas opciones:
-
-- Abre `index.html` directamente en el navegador.
-- O sírvelo localmente:
-
-  ```bash
-  npx serve .
-  ```
-
-  y abre la URL que imprime (por defecto http://localhost:3000).
-
-## Diseño de producción con Supabase
-
-El demo simula el backend en el navegador. En producción, el diseño usa Supabase:
-
-| Pieza | Qué hace | Archivo |
-|---|---|---|
-| **Auth** | Personal (lab, admin, médico) con correo y contraseña. Paciente con folio EIRA + fecha de nacimiento + código OTP por SMS o correo. | — |
-| **Postgres + RLS por rol** | Los permisos viven en la base de datos, no solo en el frontend. Triggers validan qué transiciones de estado puede hacer cada rol. | [`supabase/schema.sql`](supabase/schema.sql) |
-| **Storage privado** | Bucket `resultados` privado, solo PDFs. Ruta `{paciente_id}/{resultado_id}.pdf`. La paciente no tiene acceso directo al bucket. | [`supabase/schema.sql`](supabase/schema.sql) |
-| **Edge Function `signed-url`** | Valida rol y estado, devuelve una URL firmada de 300 s y registra la acción en la bitácora. | [`supabase/functions/signed-url/index.ts`](supabase/functions/signed-url/index.ts) |
-
-### Roles (RLS)
-
-| Rol | Puede | No puede |
-|---|---|---|
-| `lab` | Subir PDFs y ver el estado de las cargas de **su** laboratorio | Ver datos de pacientes, autorizar, ver cargas de otros laboratorios |
-| `admin` | Asociar, revisar, enviar avisos, gestionar directorio de apoyo, contenido y testimonios | Autorizar clínicamente o modificar categoría y conducta |
-| `medico` | Autorizar o rechazar, asignar categoría y conducta, recomendar estudios, aprobar contenido | — |
-| `paciente` | Ver **solo sus** resultados en estado `autorizado`, `notificado`, `consultado` o `cerrado`, y pedir apoyo | Cualquier otra cosa |
-
-La nota clínica privada se guarda en una tabla aparte (`notas_clinicas`) que solo puede leer el médico. RLS filtra filas, no columnas, así que esto evita que la paciente o el laboratorio la vean.
-
-### Estados del resultado
-
-```
-cargado → asociado → revisado → autorizado → notificado → consultado → seguimiento_pendiente | cerrado
-   ↘ observado (admin lo devuelve al lab)
-                         ↘ rechazado_clinico (el médico pide repetir el estudio)
-autorizado | notificado → entregado_asistido (entrega en persona)
-```
-
-### Despliegue
-
-Requiere la [Supabase CLI](https://supabase.com/docs/guides/cli) y un proyecto de Supabase.
+## Cómo correrlo
+No necesita instalación ni credenciales:
 
 ```bash
-supabase link --project-ref <tu-project-ref>
-supabase db push                       # o pega supabase/schema.sql en el SQL Editor
-supabase functions deploy signed-url
-supabase secrets set ALLOWED_ORIGIN=https://tu-dominio.example   # opcional, CORS
+# opción 1: abrir index.html en el navegador
+# opción 2:
+npx serve .
 ```
 
-La Edge Function usa `SUPABASE_URL` y `SUPABASE_SERVICE_ROLE_KEY`, que Supabase inyecta automáticamente. **Nunca expongas la service role key en el frontend.**
+Para la demo, cambia de rol con los botones de arriba: Laboratorio → Admin EIRA → Médica → Admin EIRA (Avisos) → Paciente. En el formulario del laboratorio está **"Llenar con ejemplo"** y en el acceso de la paciente, **"Usar paciente de ejemplo"**. El código OTP aparece en pantalla en modo demo. **"Reiniciar demo"** restaura los datos semilla.
 
-Para descargar un resultado, el frontend llama a la función con el token de la sesión:
+El prototipo guarda su estado en el `localStorage` del navegador y simula el backend en el cliente.
 
-```js
-const { data } = await supabase.functions.invoke('signed-url', {
-  body: { resultado_id, accion: 'descargar' }, // o 'ver'
-});
-window.location.href = data.url; // vence en 300 s
-```
+## Diseño de producción
+- **Supabase:** Auth (OTP por SMS o correo), Postgres con **RLS por rol** (lab, admin, médico, paciente), **Storage privado** y una **Edge Function** que valida rol y estado antes de emitir una URL firmada de 300 s y registrar la descarga en la bitácora.
+- La tabla `bitacora` solo admite `INSERT`.
+- La paciente solo puede leer sus resultados con estado `autorizado`, `notificado`, `consultado` o `cerrado`.
+- Notificaciones con Twilio (SMS) o Resend (correo), siempre con plantillas neutras.
 
-## Lo que el sistema NO hace
+Ver [`SPEC-eira-resultados.md`](SPEC-eira-resultados.md), [`supabase/schema.sql`](supabase/schema.sql) (tablas, RLS y bucket privado) y [`supabase/functions/signed-url`](supabase/functions/signed-url/index.ts) (URL firmada de 300 s).
 
-- No diagnostica ni interpreta resultados con IA en vivo. Toda explicación la aprueba un médico.
+## Lo que NO hace
+- No diagnostica ni interpreta resultados con IA. Toda explicación la aprueba personal médico.
 - No incluye diagnósticos en los avisos.
 - No muestra datos de otras pacientes.
 - No asocia resultados en automático.
 - No usa enlaces públicos.
 
-## Ayuda
-
-Si necesitas hablar con alguien: **Línea de la Vida 800 911 2000** (gratuita, 24/7). En una emergencia, llama al **911**.
-
 ## Licencia
-
-[MIT](LICENSE)
+MIT
