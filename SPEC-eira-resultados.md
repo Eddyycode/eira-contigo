@@ -46,10 +46,10 @@ cargado → asociado → revisado → autorizado → notificado → consultado �
 3. **Revisión administrativa:** se revisa que el documento sea legible, que los datos estén completos y que sea el documento correcto. Si algo falla, pasa a `observado`.
 4. **Autorización clínica (médico):** el médico ve el PDF y asigna la categoría del resultado (catálogo Bethesda simplificado), la conducta a seguir, los estudios recomendados y una nota privada. **Hasta este paso la paciente no ve nada.**
 5. **Aviso neutro (SMS o correo):**
-   > "Hola, [nombre de pila]. EIRA tiene un documento disponible para ti. Entra a [url] con tu folio."
+   > "Hola, [nombre de pila]. EIRA tiene un documento disponible para ti. Entra aquí con tu fecha de nacimiento: [url]/#f=[folio en dígitos]"
 
-   No lleva diagnóstico, hallazgos, palabras como "anormal" ni archivos adjuntos.
-6. **Acceso de la paciente:** folio EIRA + fecha de nacimiento + código OTP (por SMS o correo). La descarga usa una URL firmada que vence en 5 minutos. **Nunca hay enlaces públicos permanentes.**
+   No lleva diagnóstico, hallazgos, palabras como "anormal" ni archivos adjuntos. El enlace solo precarga el folio, que la paciente ya tiene; quien lo abra sigue necesitando su fecha de nacimiento y el OTP.
+6. **Acceso de la paciente:** folio EIRA + fecha de nacimiento + código OTP (por SMS o correo). El folio es `EIRA-` + 6 dígitos y el último es verificador (Luhn): un número mal escrito se detecta al capturarlo, antes de enviar nada. Se acepta con o sin `EIRA-`, con espacios y con la letra O como cero. El enlace del aviso abre la entrada con el folio ya escrito, y el código OTP se autollena desde el SMS (`autocomplete="one-time-code"`) y entra en cuanto se completa. La descarga usa una URL firmada que vence en 5 minutos. **Nunca hay enlaces públicos permanentes.**
 7. **Bitácora:** cada acción (subir, asociar, revisar, autorizar, notificar, ver, descargar) queda registrada con quién la hizo, cuándo y sobre qué. Solo admite inserciones: nada se edita ni se borra.
 
 ### Alternativas asistidas (para pacientes sin correo, sin teléfono propio o sin internet)

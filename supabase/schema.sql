@@ -43,6 +43,31 @@ create type public.tipo_recurso         as enum ('grupo', 'terapeuta', 'linea', 
 create type public.estado_solicitud     as enum ('abierta', 'en_proceso', 'atendida');
 
 -- -----------------------------------------------------------------------------
+-- 1.1 Folio EIRA: 'EIRA-' + 6 dígitos, el último es dígito verificador (Luhn)
+--     Igual que el frontend: se normaliza como la gente lo escribe (se ignoran
+--     el prefijo, los espacios y los guiones; la letra O cuenta como cero).
+-- -----------------------------------------------------------------------------
+create or replace function public.folio_digitos(folio text)
+returns text
+language sql immutable as $$
+  select regexp_replace(translate(upper(coalesce(folio, '')), 'O', '0'), '[^0-9]', '', 'g')
+$$;
+
+-- Un dígito mal capturado rompe la suma de Luhn y se detecta al momento.
+create or replace function public.folio_luhn_ok(folio text)
+returns boolean
+language sql immutable as $$
+  select length(d) = 6
+     and (select sum(case when i % 2 = 0 then v              -- 1º, 3º, 5º desde la derecha
+                          when v * 2 > 9 then v * 2 - 9      -- 2º, 4º, 6º se duplican
+                          else v * 2 end)
+          from generate_series(0, length(d) - 1) as i,
+               lateral (select substr(d, length(d) - i, 1)::int as v) s
+         ) % 10 = 0
+  from (select public.folio_digitos(folio) as d) f
+$$;
+
+-- -----------------------------------------------------------------------------
 -- 2. Tablas
 -- -----------------------------------------------------------------------------
 create table public.laboratorios (
@@ -72,6 +97,8 @@ create table public.pacientes (
   contacto_confianza         jsonb,          -- recibe el aviso, NUNCA el resultado
   consentimiento_contacto_at timestamptz,
   created_at                 timestamptz not null default now(),
+  constraint folio_eira_valido
+    check (folio_eira ~ '^EIRA-[0-9]{6}$' and folio_luhn_ok(folio_eira)),
   constraint contacto_confianza_requiere_consentimiento
     check (contacto_confianza is null or consentimiento_contacto_at is not null)
 );
@@ -131,9 +158,10 @@ create table public.avisos (
   resultado_id uuid not null references public.resultados (id) on delete cascade,
   canal        public.canal_aviso not null,
   destinatario text not null,
-  -- Aviso neutro: sin diagnóstico, sin hallazgos, sin adjuntos.
+  -- Aviso neutro: sin diagnóstico, sin hallazgos, sin adjuntos. El enlace solo precarga
+  -- el folio en dígitos; para entrar siguen haciendo falta la fecha de nacimiento y el OTP.
   plantilla    text not null default
-    'Hola, {nombre_pila}. EIRA tiene un documento disponible para ti. Entra a {url} con tu folio.',
+    'Hola, {nombre_pila}. EIRA tiene un documento disponible para ti. Entra aquí con tu fecha de nacimiento: {url}/#f={folio_digitos}',
   estado       public.estado_aviso not null default 'pendiente',
   enviado_at   timestamptz,
   created_at   timestamptz not null default now()
@@ -313,9 +341,12 @@ begin
     if new.estado = 'asociado' then
       new.asociado_por := auth.uid();
       -- El sistema nunca asocia en automático: si folio o fecha de nacimiento no coinciden,
-      -- la persona que confirma debe escribir una justificación.
+      -- la persona que confirma debe escribir una justificación. El folio se compara
+      -- normalizado (solo dígitos, O→0): 'eira o14282' y 'EIRA-014282' son el mismo folio.
       select * into v_paciente from public.pacientes where id = new.paciente_id;
-      if (new.folio_reportado is distinct from v_paciente.folio_eira
+      if (public.folio_digitos(new.folio_reportado) = ''
+          or public.folio_digitos(new.folio_reportado)
+             is distinct from public.folio_digitos(v_paciente.folio_eira)
           or new.fecha_nac_reportada is distinct from v_paciente.fecha_nacimiento)
          and coalesce(btrim(new.match_justificacion), '') = '' then
         raise exception 'El folio o la fecha de nacimiento no coinciden: se requiere justificación';
