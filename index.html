@@ -5,14 +5,17 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>EIRA Contigo</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;600;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;600;800&family=Fraunces:opsz,wght@9..144,600&display=swap" rel="stylesheet">
+<link rel="icon" type="image/png" sizes="192x192" href="assets/icon-192.png">
+<link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
+<meta name="theme-color" content="#3b0d2c">
 <style>
 /* VOICE: cálido y clínico; tranquiliza, no alarma.
    IDEA: el expediente rosa de EIRA, del laboratorio a las manos de la paciente.
    PICTURE: la herramienta misma; cada rol ve su mesa de trabajo.
-   COLOUR and TYPE: rosa EIRA + ciruela profundo + blanco; Figtree.
+   COLOUR and TYPE: rosa EIRA + lila + ciruela profundo sobre papel acuarela; Fraunces (títulos) + Figtree.
    LAYOUT: barra de roles arriba, lista + detalle; vista de paciente en columna de teléfono. */
-:root{color-scheme:light dark;--bg:light-dark(#fffafc,#170c14);--card:light-dark(#ffffff,#221420);--ink:light-dark(#2b0f22,#f7e8f0);--muted:light-dark(#76586b,#c4a3b7);--line:light-dark(#f0d9e5,#3d2435);--rosa:light-dark(#c8236f,#ff6aa8);--rosa-s:light-dark(#fde6f0,#3a1830);--plum:#3b0d2c;--ok:light-dark(#0e7a57,#62d6a8);--okb:light-dark(#e3f6ee,#123326);--warn:light-dark(#9a5300,#ffb963);--warnb:light-dark(#fff1de,#3a2810)}
+:root{color-scheme:light dark;--bg:light-dark(#fffafc,#170c14);--card:light-dark(#ffffff,#221420);--ink:light-dark(#2b0f22,#f7e8f0);--muted:light-dark(#76586b,#c4a3b7);--line:light-dark(#f0d9e5,#3d2435);--rosa:light-dark(#c8236f,#ff6aa8);--rosa-s:light-dark(#fde6f0,#3a1830);--plum:#3b0d2c;--ok:light-dark(#0e7a57,#62d6a8);--okb:light-dark(#e3f6ee,#123326);--warn:light-dark(#9a5300,#ffb963);--warnb:light-dark(#fff1de,#3a2810);--lila:light-dark(#7a3e9d,#c9a0ea);--lila-s:light-dark(#f1e7f8,#2a1a38);--on-rosa:light-dark(#ffffff,#2b0f22);--on-color:#ffffff;--mark:#ff8fbf;--font-display:Fraunces,Georgia,serif;--font-sans:Figtree,system-ui,sans-serif;--font-mono:ui-monospace,Menlo,monospace;--space-8:8px;--space-12:12px}
 :root[data-theme=light]{color-scheme:light}:root[data-theme=dark]{color-scheme:dark}
 *{box-sizing:border-box;min-width:0}
 body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.55 Figtree,system-ui,sans-serif;overflow-x:clip}
@@ -65,6 +68,93 @@ table{width:100%;border-collapse:collapse;font-size:15px}th,td{text-align:left;p
 footer{padding:20px max(4vw,16px) 32px;color:var(--muted);font-size:13px;text-align:center}
 ul{padding-left:20px}
 @media(prefers-reduced-motion:reduce){#toast{transition:none}}
+/* ===== Design system EIRA Contigo: acuarela, movimiento ligero y campos de paciente ===== */
+/* ── Watercolor layer ─────────────────────────────────────────────
+   Added on top of the repo's styles: paper grain, pigment washes in rosa and lila,
+   hand-cut (uneven) corners and a deckled role bar. Colors come only from tokens. */
+:root{--paper:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .23 0 0 0 0 .05 0 0 0 0 .17 0 0 0 .07 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");--deckle:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='12' viewBox='0 0 160 12'%3E%3Cpath d='M0 0h160v4c-9 5-17 7-27 4s-19-6-30-2-18 7-29 5-17-8-28-6S27 12 16 9 5 3 0 5z'/%3E%3C/svg%3E");--wash-corners:18px 22px 17px 24px / 24px 17px 22px 18px;--wash-corners-sm:12px 15px 11px 14px / 14px 11px 15px 12px}
+body{background:
+  radial-gradient(ellipse 60% 45% at 0% 0%,var(--rosa-s),transparent 70%),
+  radial-gradient(ellipse 55% 50% at 100% 12%,var(--lila-s),transparent 72%),
+  radial-gradient(ellipse 50% 40% at 30% 100%,var(--lila-s),transparent 70%),
+  var(--paper),var(--bg);background-attachment:fixed}
+h1,h2,.brand{font-family:var(--font-display);font-weight:600;letter-spacing:-.01em}
+header.top{position:relative;background:
+  radial-gradient(ellipse 40% 140% at 12% 0%,color-mix(in srgb,var(--lila) 45%,transparent),transparent 70%),
+  radial-gradient(ellipse 35% 160% at 88% 100%,color-mix(in srgb,var(--rosa) 35%,transparent),transparent 70%),
+  var(--paper),var(--plum)}
+header.top::after{content:"";position:absolute;left:0;right:0;bottom:-11px;height:12px;background:var(--plum);-webkit-mask:var(--deckle) repeat-x 0 0/160px 12px;mask:var(--deckle) repeat-x 0 0/160px 12px;pointer-events:none}
+.card,.modal>.card{border-radius:var(--wash-corners);background:
+  radial-gradient(ellipse 70% 55% at 100% 0%,var(--lila-s),transparent 60%),
+  radial-gradient(ellipse 60% 45% at 0% 100%,var(--rosa-s),transparent 62%),
+  var(--paper),var(--card)}
+button.pri{color:var(--on-rosa);border-color:transparent;border-radius:var(--wash-corners-sm);background:
+  radial-gradient(circle at 18% 25%,var(--rosa) 0,transparent 62%),
+  radial-gradient(circle at 90% 85%,var(--lila) 0,transparent 70%),
+  var(--paper),var(--rosa)}
+button{border-radius:var(--wash-corners-sm)}
+input,select,textarea{border-radius:var(--wash-corners-sm)}
+.chip.l{background:var(--lila-s);color:var(--lila)}
+.notice{border-radius:var(--wash-corners);background:
+  radial-gradient(ellipse 70% 90% at 100% 100%,var(--lila-s),transparent 70%),
+  var(--paper),var(--rosa-s)}
+.kpi,.cand{border-radius:var(--wash-corners-sm)}
+.kpi{background:radial-gradient(ellipse 80% 70% at 100% 0%,var(--rosa-s),transparent 65%),var(--paper),var(--card)}
+.score{color:var(--lila)}
+.code{background:var(--paper),var(--lila-s);border-radius:var(--wash-corners-sm)}
+#toast{background:radial-gradient(ellipse 60% 120% at 0% 0%,color-mix(in srgb,var(--lila) 50%,transparent),transparent 70%),var(--paper),var(--plum);border-radius:var(--wash-corners-sm)}
+.tabs{border-bottom-color:var(--lila-s)}
+
+/* ── Motion: light feedback ───────────────────────────────────────
+   Short, soft, never in the way. All of it switches off under prefers-reduced-motion. */
+:root{--ease-out:cubic-bezier(.2,.8,.2,1);--ease-soft-spring:cubic-bezier(.34,1.45,.64,1);--dur-press:120ms;--dur-done:900ms}
+button{transition:transform var(--dur-press) var(--ease-out),filter var(--dur-press) var(--ease-out)}
+button:active:not(:disabled){transform:scale(.97)}
+button.pri:hover{filter:saturate(1.15) brightness(1.03)}
+#toast{transform:translate(-50%,10px);transition:opacity .2s var(--ease-out),transform .3s var(--ease-soft-spring)}
+#toast.on{transform:translate(-50%,0)}
+#toast.done-toast{display:flex;align-items:center;gap:10px}
+#toast .done-mark{width:28px;height:28px}
+
+/* Done: a watercolor bloom opens, a ring and check paint in, a few petals drift out */
+.done{display:flex;align-items:center;gap:var(--space-12)}
+.done p{margin:0;font-weight:600;animation:done-text .35s .45s var(--ease-out) both}
+.done-mark{width:56px;height:56px;flex:none;overflow:visible}
+.done-mark .bloom{fill:var(--lila-s);transform-box:fill-box;transform-origin:center;animation:done-bloom .55s var(--ease-soft-spring) both}
+.done-mark .bloom-2{fill:var(--rosa-s);animation-delay:.06s}
+.done-mark .ring{fill:none;stroke:var(--rosa);stroke-width:2.5;stroke-linecap:round;stroke-dasharray:139;stroke-dashoffset:139;animation:done-draw .5s .12s var(--ease-out) forwards}
+.done-mark .check{fill:none;stroke:var(--lila);stroke-width:4;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:30;stroke-dashoffset:30;animation:done-draw .32s .42s var(--ease-out) forwards}
+#toast .done-mark .check{stroke:var(--on-color)}
+#toast .done-mark .ring{stroke:var(--mark)}
+.done-mark .petal{fill:var(--rosa);opacity:0;transform-box:fill-box;transform-origin:center;animation:done-petal .7s .5s var(--ease-out) forwards}
+.done-mark .petal:nth-of-type(even){fill:var(--lila)}
+@keyframes done-bloom{from{transform:scale(.3);opacity:0}to{transform:scale(1);opacity:1}}
+@keyframes done-draw{to{stroke-dashoffset:0}}
+@keyframes done-petal{0%{opacity:0;transform:translate(0,0) scale(.4)}25%{opacity:.9}100%{opacity:0;transform:translate(var(--dx),var(--dy)) scale(1)}}
+@keyframes done-text{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
+@media (prefers-reduced-motion:reduce){
+ button,#toast{transition:none}button:active:not(:disabled){transform:none}#toast{transform:translateX(-50%)}
+ .done p,.done-mark .bloom{animation:none}
+ .done-mark .ring,.done-mark .check{animation:none;stroke-dashoffset:0}
+ .done-mark .petal{display:none}
+}
+
+/* ── Patient inputs: few keystrokes, numbers only ───────────────── */
+.patient{font-size:18px}
+.patient label{font-size:16px}
+.folio{display:flex;align-items:center;gap:6px;margin-top:4px;padding:0 12px;min-height:52px;border:1px solid var(--line);border-radius:var(--wash-corners-sm);background:var(--bg)}
+.folio .pre{color:var(--muted);font:600 18px/1 var(--font-mono);user-select:none}
+.folio input{border:0;margin:0;padding:12px 0;min-height:0;background:transparent;font:600 22px/1 var(--font-mono);letter-spacing:.14em}
+.folio input:focus-visible{outline:none}
+.folio:focus-within{outline:3px solid var(--rosa);outline-offset:2px}
+.folio.ok{border-color:var(--ok)}
+.folio.bad{border-color:var(--warn)}
+.hint{font-size:14px;margin:6px 0 0;color:var(--muted);min-height:1.4em}
+.hint.ok{color:var(--ok)}.hint.bad{color:var(--warn)}
+.dob{display:grid;grid-template-columns:4.2em 4.2em 5.6em;gap:var(--space-8);margin-top:4px}
+.dob input{text-align:center;font:600 22px/1 var(--font-mono);min-height:52px;padding:10px 4px;margin:0}
+.dob small{display:block;font-size:13px;color:var(--muted);text-align:center;margin-top:4px}
+.otp{font:600 28px/1 var(--font-mono);letter-spacing:.55em;text-align:center;max-width:12em;min-height:56px;padding-left:.55em}
 @media(max-width:600px){table{font-size:13px}.stack thead{display:none}.stack tr{display:grid;padding-block:10px;border-bottom:1px solid var(--line)}.stack td{display:flow-root;border:0;padding:3px 0;padding-inline-start:8em;text-align:start}.stack td::before{content:attr(data-l);float:inline-start;width:7.5em;margin-inline-start:-8em;white-space:normal;color:var(--muted)}.stack td:empty{display:none}}
 </style>
 <script>new MutationObserver(()=>{for(const c of document.querySelectorAll('.stack td:not([data-l])')){let i=0,p=c;while(p=p.previousElementSibling)i+=p.colSpan;c.dataset.l=c.closest('table').rows[0].cells[i]?.textContent||''}}).observe(document,{childList:true,subtree:true})</script>
@@ -86,7 +176,7 @@ ul{padding-left:20px}
 <footer>EIRA Contigo · Reto 4, Nerdearla Vibeathon by Devin · Para EIRA Movimiento Rosa A.C. · Prototipo: no usar con datos reales.</footer>
 <script>
 {
-const KEY='eira-contigo-v1';
+const KEY='eira-contigo-v2';
 const app=document.getElementById('app'), T=document.getElementById('toast');
 const blobs={};
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -99,6 +189,12 @@ const edad=f=>{const b=new Date(f+'T12:00:00'),n=new Date();let a=n.getFullYear(
 const maskTel=t=>'•• •••• '+String(t).replace(/\D/g,'').slice(-4);
 const uid=p=>p+'-'+Math.random().toString(36).slice(2,7).toUpperCase();
 const today=new Date().toISOString().slice(0,10);
+/* Folios: 6 dígitos, el último es dígito verificador (Luhn). Se acepta "EIRA-", espacios, guiones y la letra O por cero. */
+const folioDigits=s=>String(s||'').toUpperCase().replace(/^\s*EIRA\s*-?/,'').replace(/O/g,'0').replace(/\D/g,'');
+const luhnOk=d=>{let t=0;for(let i=0;i<d.length;i++){let n=+d[d.length-1-i];if(i%2){n*=2;if(n>9)n-=9}t+=n}return d.length===6&&t%10===0};
+const sameFolio=(a,b)=>{const x=folioDigits(a);return x.length>0&&x===folioDigits(b)};
+const grp=d=>d.length>3?d.slice(0,3)+' '+d.slice(3):d;
+const MARK=`<svg class="done-mark" viewBox="0 0 56 56" aria-hidden="true"><circle class="bloom" cx="28" cy="28" r="26"/><circle class="bloom bloom-2" cx="31" cy="25" r="17"/><circle class="ring" cx="28" cy="28" r="22"/><path class="check" d="M18 29l7 7 13-14"/><circle class="petal" cx="28" cy="28" r="3" style="--dx:-30px;--dy:-18px"/><circle class="petal" cx="28" cy="28" r="2.5" style="--dx:30px;--dy:-22px"/><circle class="petal" cx="28" cy="28" r="2" style="--dx:-26px;--dy:22px"/><circle class="petal" cx="28" cy="28" r="3" style="--dx:32px;--dy:16px"/><circle class="petal" cx="28" cy="28" r="2" style="--dx:2px;--dy:-34px"/></svg>`;
 
 const CATS={
   negativo:{n:'Negativo para lesión intraepitelial o malignidad',g:'negativo',c:'Control de rutina'},
@@ -140,11 +236,11 @@ const ACTOR={lab:'Lab. Citología Ejemplo',admin:'Lucía · Admin EIRA',medico:'
 
 function seed(){
   const t=(d,h)=>`${d}T${h||'10:00'}:00-06:00`;
-  return {v:1,seq:101,
+  return {v:2,seq:101,
   pacientes:[
-    {id:'P1',folio:'EIRA-0142',nombre:'María Ejemplo López',fnac:'1984-03-12',tel:'33 0000 4821',email:'maria.ejemplo@correo.test',municipio:'Zapotlán el Grande'},
-    {id:'P2',folio:'EIRA-0098',nombre:'María Eugenia Ejemplo López',fnac:'1979-07-02',tel:'33 0000 1177',email:'',municipio:'Zapotlán el Grande'},
-    {id:'P3',folio:'EIRA-0177',nombre:'Ana Prueba Ruiz',fnac:'1990-11-23',tel:'33 0000 6630',email:'ana.prueba@correo.test',municipio:'Tuxpan'}],
+    {id:'P1',folio:'EIRA-014282',nombre:'María Ejemplo López',fnac:'1984-03-12',tel:'33 0000 4821',email:'maria.ejemplo@correo.test',municipio:'Zapotlán el Grande'},
+    {id:'P2',folio:'EIRA-000984',nombre:'María Eugenia Ejemplo López',fnac:'1979-07-02',tel:'33 0000 1177',email:'',municipio:'Zapotlán el Grande'},
+    {id:'P3',folio:'EIRA-001776',nombre:'Ana Prueba Ruiz',fnac:'1990-11-23',tel:'33 0000 6630',email:'ana.prueba@correo.test',municipio:'Tuxpan'}],
   brigadas:[
     {id:'B0',nombre:'Brigada Zapotlán · mayo',municipio:'Zapotlán el Grande',fecha:'2026-05-16',servicios:['Citología','Revisión mamaria']},
     {id:'B1',nombre:'Brigada Zapotlán · noviembre',municipio:'Zapotlán el Grande',fecha:'2026-11-08',servicios:['Citología','Ultrasonido mamario']},
@@ -158,20 +254,20 @@ function seed(){
     {id:'V4',pacienteId:'P2',brigadaId:'B1',servicios:['Citología','Ultrasonido mamario']},
     {id:'V5',pacienteId:'P3',brigadaId:'B2',servicios:['Citología','Revisión mamaria']}],
   resultados:[
-    {id:'R-0090',pacienteId:'P2',brigadaId:'B0',folioRep:'EIRA-0098',nombreRep:'MARIA EUGENIA EJEMPLO LOPEZ',fnacRep:'1979-07-02',labCat:'negativo',archivo:'sintetico',estado:'cerrado',categoria:'negativo',conducta:'Control de rutina',estudios:[],creado:t('2026-05-28')},
-    {id:'R-0099',pacienteId:'P2',brigadaId:'B1',folioRep:'EIRA-0098',nombreRep:'MA EUGENIA EJEMPLO',fnacRep:'1979-07-02',labCat:'negativo',archivo:'sintetico',estado:'observado',motivo:'Escaneo ilegible. Se pidió una nueva copia al laboratorio.',estudios:[],creado:t('2026-11-17')},
-    {id:'R-0101',pacienteId:'P3',brigadaId:'B2',folioRep:'EIRA-0177',nombreRep:'ANA PRUEBA RUIZ',fnacRep:'1990-11-23',labCat:'ascus',archivo:'sintetico',estado:'notificado',categoria:'ascus',conducta:'Prueba de VPH',estudios:['Prueba de VPH'],creado:t('2026-11-19')}],
+    {id:'R-0090',pacienteId:'P2',brigadaId:'B0',folioRep:'EIRA-000984',nombreRep:'MARIA EUGENIA EJEMPLO LOPEZ',fnacRep:'1979-07-02',labCat:'negativo',archivo:'sintetico',estado:'cerrado',categoria:'negativo',conducta:'Control de rutina',estudios:[],creado:t('2026-05-28')},
+    {id:'R-0099',pacienteId:'P2',brigadaId:'B1',folioRep:'EIRA-000984',nombreRep:'MA EUGENIA EJEMPLO',fnacRep:'1979-07-02',labCat:'negativo',archivo:'sintetico',estado:'observado',motivo:'Escaneo ilegible. Se pidió una nueva copia al laboratorio.',estudios:[],creado:t('2026-11-17')},
+    {id:'R-0101',pacienteId:'P3',brigadaId:'B2',folioRep:'EIRA-001776',nombreRep:'ANA PRUEBA RUIZ',fnacRep:'1990-11-23',labCat:'ascus',archivo:'sintetico',estado:'notificado',categoria:'ascus',conducta:'Prueba de VPH',estudios:['Prueba de VPH'],creado:t('2026-11-19')}],
   bitacora:[
     {t:t('2026-11-20','09:14'),actor:'Lucía · Admin EIRA',accion:'Envió aviso neutro (SMS)',ref:'R-0101'},
     {t:t('2026-11-19','18:02'),actor:'Dra. Rivera · Médica EIRA',accion:'Autorizó resultado (publicación en línea)',ref:'R-0101'},
     {t:t('2026-11-17','12:40'),actor:'Lucía · Admin EIRA',accion:'Marcó observado: escaneo ilegible',ref:'R-0099'}],
-  avisos:[{id:'A-1',resId:'R-0101',canal:'SMS',destino:'•• •••• 6630',texto:'Hola, Ana. EIRA tiene un documento disponible para ti. Entra a eira-contigo.mx con tu folio.',t:t('2026-11-20','09:14')}],
+  avisos:[{id:'A-1',resId:'R-0101',canal:'SMS',destino:'•• •••• 6630',texto:'Hola, Ana. EIRA tiene un documento disponible para ti. Entra aquí con tu fecha de nacimiento: eira-contigo.mx/#f=001776',t:t('2026-11-20','09:14')}],
   solicitudes:[]};
 }
 
 let S;
 try{S=JSON.parse(localStorage.getItem(KEY))}catch(e){}
-if(!S||S.v!==1)S=seed();
+if(!S||S.v!==2)S=seed();
 function save(){try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}}
 const ui={rol:'lab',at:'bandeja',sel:null,msel:null,brig:null,q:'',hist:null,pac:null,otp:null,pt:'docs',pres:null,tokens:{},modal:null,filtro:'',pf:null,lpf:null};
 
@@ -182,7 +278,7 @@ const chip=e=>`<span class="chip ${EST[e][1]}">${EST[e][0]}</span>`;
 const pasadas=()=>S.brigadas.filter(b=>b.fecha<=today).sort((a,b)=>b.fecha.localeCompare(a.fecha));
 const proximas=m=>S.brigadas.filter(b=>b.fecha>today&&(!m||b.municipio===m)).sort((a,b)=>a.fecha.localeCompare(b.fecha));
 function log(accion,ref,actor){S.bitacora.unshift({t:now(),actor:actor||(ui.rol==='paciente'?'Paciente '+(pac(ui.pac)?.folio||''):ACTOR[ui.rol]),accion,ref:ref||''});save()}
-let tt;function toast(m){T.textContent=m;T.classList.add('on');clearTimeout(tt);tt=setTimeout(()=>T.classList.remove('on'),4000)}
+let tt;function toast(m,done){T.classList.toggle('done-toast',!!done);if(done)T.innerHTML=MARK+'<span>'+esc(m)+'</span>';else T.textContent=m;T.classList.add('on');clearTimeout(tt);tt=setTimeout(()=>T.classList.remove('on'),4000)}
 function openModal(title,html){ui.modal={title,html};render()}
 
 const docHTML=r=>`<!DOCTYPE html><html><body style="font:14px/1.5 system-ui,sans-serif;margin:24px;color:#222">
@@ -214,7 +310,7 @@ function viewLab(){
 }
 
 /* ---------- ADMIN ---------- */
-function cands(r){return S.pacientes.map(p=>{const f=p.folio.toLowerCase()===r.folioRep.toLowerCase(),d=p.fnac===r.fnacRep,n=sim(p.nombre,r.nombreRep);return{p,f,d,n,s:(f?50:0)+(d?30:0)+Math.round(n*20)}}).filter(x=>x.s>=10).sort((a,b)=>b.s-a.s)}
+function cands(r){return S.pacientes.map(p=>{const f=sameFolio(p.folio,r.folioRep),d=p.fnac===r.fnacRep,n=sim(p.nombre,r.nombreRep);return{p,f,d,n,s:(f?50:0)+(d?30:0)+Math.round(n*20)}}).filter(x=>x.s>=10).sort((a,b)=>b.s-a.s)}
 function viewAdmin(){
   const nb=S.resultados.filter(r=>['cargado','asociado'].includes(r.estado)).length, na=S.resultados.filter(r=>r.estado==='autorizado').length, ns=S.solicitudes.filter(s=>s.estado==='pendiente').length;
   const tabs=[['bandeja','Bandeja',nb],['avisos','Avisos',na],['brigadas','Brigadas e historiales',0],['panel','Panel',ns],['bitacora','Bitácora',0]];
@@ -256,7 +352,7 @@ function textoAviso(r,canal){
   const p=pac(r.pacienteId),n=p.nombre.split(' ')[0];
   if(canal==='Entrega asistida')return `Entrega asistida: ${p.nombre} recibirá su documento en la sede de EIRA o en la próxima brigada, con verificación de identidad.`;
   if(r.acompanada)return `Hola, ${n}. EIRA quiere ponerse en contacto contigo para agendar una cita. Te llamaremos pronto.`;
-  return `Hola, ${n}. EIRA tiene un documento disponible para ti. Entra a eira-contigo.mx con tu folio.`;
+  return `Hola, ${n}. EIRA tiene un documento disponible para ti. Entra aquí con tu fecha de nacimiento: eira-contigo.mx/#f=${folioDigits(p.folio)}`;
 }
 function aAvisos(){
   const q=S.resultados.filter(r=>r.estado==='autorizado');
@@ -268,9 +364,9 @@ function aAvisos(){
 function aBrigadas(){
   const b=S.brigadas.find(x=>x.id===ui.brig);
   const q=ui.q.toLowerCase();
-  const found=q?S.pacientes.filter(p=>p.folio.toLowerCase().includes(q)||sim(p.nombre,ui.q)>0):[];
+  const qd=folioDigits(ui.q);const found=q?S.pacientes.filter(p=>(qd.length>=3&&folioDigits(p.folio).includes(qd))||sim(p.nombre,ui.q)>0):[];
   return `<div class="grid2"><div>
-  <form class="card" data-form="buscar"><h2>Recuperar historial</h2><label>Folio o nombre<input name="q" value="${esc(ui.q)}" placeholder="EIRA-0142 o María"></label><div class="row"><button class="pri">Buscar</button></div>
+  <form class="card" data-form="buscar"><h2>Recuperar historial</h2><label>Folio o nombre<input name="q" value="${esc(ui.q)}" placeholder="EIRA-014282 o María"></label><div class="row"><button class="pri">Buscar</button></div>
   ${found.map(p=>`<button type="button" class="item" data-act="hist" data-p="${p.id}" style="margin-top:8px"><span><b>${esc(p.nombre)}</b><br><span class="fine">${p.folio} · ${esc(p.municipio)}</span></span><span class="chip">${S.visitas.filter(v=>v.pacienteId===p.id).length} visitas</span></button>`).join('')}
   ${q&&!found.length?'<p class="muted">Sin coincidencias.</p>':''}</form>
   <h3>Brigadas</h3><div class="list">${S.brigadas.slice().sort((x,y)=>y.fecha.localeCompare(x.fecha)).map(x=>`<button class="item" data-act="brig" data-id="${x.id}" aria-current="${b===x&&!ui.hist}"><span><b>${esc(x.nombre)}</b><br><span class="fine">${esc(x.municipio)} · ${fmtF(x.fecha)}</span></span>${x.fecha>today?'<span class="chip m">Próxima</span>':`<span class="chip">${S.visitas.filter(v=>v.brigadaId===x.id).length} atendidas</span>`}</button>`).join('')}</div>
@@ -285,7 +381,7 @@ function detBrig(b){
   <table class="stack"><thead><tr><th>Paciente</th><th>Servicios</th><th>Resultado</th><th>Historial</th></tr></thead><tbody>
   ${vs.map(v=>{const p=pac(v.pacienteId),r=S.resultados.filter(r=>r.pacienteId===p.id&&r.brigadaId===b.id).pop();return `<tr><td><b>${esc(p.nombre)}</b><br><span class="fine">${p.folio}</span></td><td>${v.servicios.map(esc).join(', ')}</td><td>${r?chip(r.estado):'<span class="fine">Sin resultado</span>'}</td><td><button data-act="hist" data-p="${p.id}">Ver</button></td></tr>`}).join('')||'<tr><td colspan="4" class="muted">Aún no hay atenciones registradas.</td></tr>'}
   </tbody></table>
-  ${b.fecha<=today?`<form data-form="atencion" data-id="${b.id}"><h3>Registrar atención en esta brigada</h3><label>Folio de la paciente<input name="folio" required placeholder="EIRA-0177"></label><label>Servicio<select name="serv">${b.servicios.map(s=>`<option>${esc(s)}</option>`).join('')}</select></label><div class="row"><button class="pri">Registrar atención</button></div></form>`:'<div class="notice">Brigada próxima: las pacientes de este municipio la ven en "Servicios EIRA".</div>'}`;
+  ${b.fecha<=today?`<form data-form="atencion" data-id="${b.id}"><h3>Registrar atención en esta brigada</h3><label>Folio de la paciente<input name="folio" required placeholder="EIRA-001776"></label><label>Servicio<select name="serv">${b.servicios.map(s=>`<option>${esc(s)}</option>`).join('')}</select></label><div class="row"><button class="pri">Registrar atención</button></div></form>`:'<div class="notice">Brigada próxima: las pacientes de este municipio la ven en "Servicios EIRA".</div>'}`;
 }
 function historial(pid,admin){
   const p=pac(pid);
@@ -328,20 +424,25 @@ function formMed(r){
 
 /* ---------- PACIENTE ---------- */
 function viewPaciente(){
-  if(!ui.pac)return `<div class="phone">${ui.otp?otpView():loginView()}</div>`;
+  if(!ui.pac)return `<div class="phone patient">${ui.otp?otpView():loginView()}</div>`;
   const p=pac(ui.pac);
   const tabs=[['docs','Mis resultados'],['hist','Mi historial'],['serv','Servicios EIRA']];
-  return `<div class="phone"><div class="row" style="justify-content:space-between;margin:0 0 8px"><h1 style="margin:0">Hola, ${esc(p.nombre.split(' ')[0])}</h1><button data-act="salir">Salir</button></div>
+  return `<div class="phone patient"><div class="row" style="justify-content:space-between;margin:0 0 8px"><h1 style="margin:0">Hola, ${esc(p.nombre.split(' ')[0])}</h1><button data-act="salir">Salir</button></div>
   <div class="tabs">${tabs.map(([k,n])=>`<button data-act="pt" data-k="${k}" aria-current="${ui.pt===k}">${n}</button>`).join('')}</div>
   ${ui.pt==='docs'?(ui.pres&&res(ui.pres)?resDetalle(res(ui.pres)):misDocs(p)):ui.pt==='hist'?`<div class="card"><h2>Mi historial por brigada</h2>${historial(p.id,false)}</div>`:servicios(p)}</div>`;
 }
-function loginView(){const l=ui.lpf||{};return `<form class="card" data-form="login"><h1>Mis resultados EIRA</h1><p class="muted">Entra con tu folio y tu fecha de nacimiento. Te enviaremos un código a tu teléfono.</p>
-  <label>Folio EIRA<input name="folio" required autocomplete="off" placeholder="EIRA-0000" value="${esc(l.folio||'')}"></label><label>Fecha de nacimiento<input type="date" name="fnac" required value="${esc(l.fnac||'')}"></label>
+function loginView(){const l=ui.lpf||{},d=folioDigits(l.folio),[ya,mo,di]=(l.fnac||'--').split('-');return `<form class="card" data-form="login"><img src="assets/eira-ribbon.png" alt="" width="96" height="96" style="display:block;margin:-6px auto 4px"><h1>Mis resultados EIRA</h1><p class="muted">${d?'Ya tenemos tu folio. Solo escribe tu fecha de nacimiento.':'Escribe tu folio y tu fecha de nacimiento. Te enviaremos un código a tu teléfono.'}</p>
+  <label for="folio">Tu folio</label><div class="folio${d.length===6?(luhnOk(d)?' ok':' bad'):''}"><span class="pre">EIRA-</span><input id="folio" name="folio" inputmode="numeric" autocomplete="off" placeholder="000 000" maxlength="9" aria-describedby="folio-h" required value="${esc(grp(d))}"></div>
+  <p class="hint${d.length===6?(luhnOk(d)?' ok':' bad'):''}" id="folio-h">${d.length===6?(luhnOk(d)?'✓ Folio correcto':'Revisa tu folio: parece que un número está cambiado.'):'Son 6 números. Están en tu SMS o en tu papelito de la brigada.'}</p>
+  <fieldset style="border:0;padding:0;margin:10px 0 0"><legend style="font-weight:600;font-size:16px">Tu fecha de nacimiento</legend><div class="dob">
+  <div><input name="dd" inputmode="numeric" maxlength="2" placeholder="DD" aria-label="Día" autocomplete="bday-day" required value="${esc(di||'')}"><small>Día</small></div>
+  <div><input name="mm" inputmode="numeric" maxlength="2" placeholder="MM" aria-label="Mes" autocomplete="bday-month" required value="${esc(mo||'')}"><small>Mes</small></div>
+  <div><input name="aaaa" inputmode="numeric" maxlength="4" placeholder="AAAA" aria-label="Año" autocomplete="bday-year" required value="${esc(ya||'')}"><small>Año</small></div></div></fieldset>
   <div class="row"><button class="pri">Recibir código</button><button type="button" data-act="demopac">Usar paciente de ejemplo</button></div>
-  <p class="fine">¿No tienes teléfono propio ni correo? Puedes recibir tu resultado en la sede de EIRA o en la próxima brigada, con una persona que te acompañe.</p></form>`}
+  <p class="fine">¿No tienes tu folio, teléfono propio o correo? Puedes recibir tu resultado en la sede de EIRA o en la próxima brigada, con una persona que te acompañe.</p></form>`}
 function otpView(){const p=pac(ui.otp.pid);return `<form class="card" data-form="otp"><h1>Revisa tu teléfono</h1><p class="muted">Enviamos un código de 6 dígitos al ${maskTel(p.tel)}. Vence en 10 minutos.</p>
   <div class="notice"><b>Modo demo:</b> el código es <span class="code">${ui.otp.code}</span></div>
-  <label>Código<input name="code" inputmode="numeric" maxlength="6" required autocomplete="one-time-code"></label>
+  <label for="code">Código de 6 números</label><input id="code" name="code" class="otp" inputmode="numeric" maxlength="6" required autocomplete="one-time-code" placeholder="······"><p class="hint">Tu teléfono puede llenarlo solo. Entras en cuanto esté completo.</p>
   <div class="row"><button class="pri">Entrar</button><button type="button" data-act="salir">Cancelar</button></div></form>`}
 function misDocs(p){const rs=S.resultados.filter(r=>r.pacienteId===p.id&&VISIBLE.includes(r.estado)).reverse();
   return rs.length?`<div class="list">${rs.map(r=>`<button class="item" data-act="pres" data-id="${r.id}"><span><b>Citología cervical</b><br><span class="fine">${esc(brg(r.brigadaId).nombre)} · ${fmtF(brg(r.brigadaId).fecha)}</span></span><span class="chip ${['consultado','cerrado'].includes(r.estado)?'m':''}">${['consultado','cerrado'].includes(r.estado)?'Visto':'Nuevo'}</span></button>`).join('')}</div>`
@@ -353,11 +454,11 @@ function resDetalle(r){
   <article class="card res" style="margin-top:12px"><h2>Citología cervical</h2><p class="fine">${esc(brg(r.brigadaId).nombre)} · revisado y autorizado por personal médico de EIRA</p>
   ${r.acompanada?`<div class="notice"><b>Tu resultado está listo.</b> Alguien de EIRA te va a llamar para entregártelo en persona y acompañarte en lo que sigue. No tienes que hacer nada más por ahora.</div>`:`
   <div class="notice"><b>Tu documento</b><br><span class="fine">Se abre con un enlace seguro que vence en 5 minutos. Solo funciona con tu sesión.</span>
-  <div class="row">${vivo?`<button class="pri" data-act="abrir" data-id="${r.id}">Abrir documento</button><span class="fine">Vence en <b data-exp="${tk.exp}">5:00</b></span>`:`<button class="pri" data-act="enlace" data-id="${r.id}">${tk?'Generar un enlace nuevo':'Ver mi resultado'}</button>`}</div>
+  <div class="row"><button class="pri" data-act="ver" data-id="${r.id}">${vivo?'Abrir mi documento':'Ver mi documento'}</button>${vivo?`<span class="fine">El enlace vence en <b data-exp="${tk.exp}">5:00</b></span>`:''}</div>
   ${vivo?`<p class="code" style="margin-top:10px">eira-contigo.mx/r/${r.id}?token=${tk.tok}&amp;expira=300s</p>`:''}</div>
   <section><h3>Qué significa</h3><p><b>${esc(ed.t)}</b></p><p>${esc(ed.b)}</p>${'speechSynthesis' in window?`<button data-act="leer" data-id="${r.id}">Escuchar en voz alta</button>`:''}<p class="fine">Texto de ejemplo. En producción lo redacta y aprueba el equipo médico de EIRA.</p></section>`}
   <section><h3>Qué sigue</h3>${r.acompanada?'<p>EIRA te explicará los siguientes pasos en tu cita.</p>':`<p>Tu médica indicó: <b>${esc(r.conducta)}</b></p>${r.estudios.length?`<p style="margin-bottom:0">Estudios recomendados para ti:</p><ul>${r.estudios.map(e=>`<li>${esc(e)}</li>`).join('')}</ul>`:''}`}
-  ${prox?`<div class="cand"><div><b>${esc(prox.nombre)}</b><br><span class="fine">${fmtF(prox.fecha)} · ${prox.servicios.map(esc).join(', ')}</span></div><button data-act="apartar" data-id="${prox.id}">Apartar mi lugar</button></div>`:''}</section>
+  ${prox?`<div class="cand"><div><b>${esc(prox.nombre)}</b><br><span class="fine">${fmtF(prox.fecha)} · ${prox.servicios.map(esc).join(', ')}</span></div>${(ui.apartado||{})[prox.id]?`<div class="done full" role="status">${MARK}<p>Listo, pedimos tu lugar. EIRA te confirmará.</p></div>`:`<button class="pri" data-act="apartar" data-id="${prox.id}">Apartar mi lugar</button>`}</div>`:''}</section>
   <section><h3>No estás sola</h3>
   ${hist.map(h=>`<div class="cand"><div class="full">“${esc(h.t)}”</div><div class="full fine">${esc(h.a)} · Historia de ejemplo ficticia. En producción solo se publican historias compartidas con consentimiento.</div></div>`).join('')}
   ${apoyo.map(a=>`<div class="cand"><div><b>${esc(a.n)}</b><br><span class="fine">${esc(a.tipo)} · ${esc(a.d)}</span>${a.tel?`<br><a href="tel:${a.tel.replace(/\s/g,'')}">${esc(a.tel)}</a>`:''}</div>${a.real?'<span class="chip o">Servicio real</span>':'<span class="chip m">Ejemplo</span>'}</div>`).join('')}
@@ -379,8 +480,8 @@ function render(){
 }
 const ACT={
   rol:b=>{ui.rol=b.dataset.r;ui.modal=null;render();scrollTo(0,0)},
-  reset:()=>{S=seed();save();Object.assign(ui,{at:'bandeja',sel:null,msel:null,brig:null,q:'',hist:null,pac:null,otp:null,pt:'docs',pres:null,tokens:{},modal:null,filtro:'',pf:null,lpf:null});toast('Demo reiniciada.');render()},
-  prefill:()=>{ui.pf={brigada:'B1',folio:'EIRA-0142',nombre:'MARIA EJEMPLO LOPEZ',fnac:'1984-03-12'};render()},
+  reset:()=>{S=seed();save();Object.assign(ui,{at:'bandeja',sel:null,msel:null,brig:null,q:'',hist:null,pac:null,otp:null,pt:'docs',pres:null,tokens:{},modal:null,filtro:'',pf:null,lpf:null,apartado:{}});toast('Demo reiniciada.');render()},
+  prefill:()=>{ui.pf={brigada:'B1',folio:'EIRA-014282',nombre:'MARIA EJEMPLO LOPEZ',fnac:'1984-03-12'};render()},
   at:b=>{ui.at=b.dataset.k;render()},
   sel:b=>{ui.sel=b.dataset.id;render()},
   msel:b=>{ui.msel=b.dataset.id;render()},
@@ -389,47 +490,52 @@ const ACT={
   obs:b=>openModal('Marcar como observado',`<form data-form="obs" data-id="${b.dataset.id}"><label>Motivo (lo verá el laboratorio)<textarea name="motivo" rows="3" required></textarea></label><div class="row"><button class="pri">Marcar observado</button><button type="button" data-act="close">Cancelar</button></div></form>`),
   asociar:b=>{const r=res(b.dataset.id),x=cands(r).find(x=>x.p.id===b.dataset.p),just=b.closest('.cand').querySelector('textarea')?.value.trim();
     if(!(x.f&&x.d)&&!just){toast('Escribe la justificación: el folio o la fecha no coinciden.');return}
-    Object.assign(r,{pacienteId:x.p.id,estado:'asociado',matchScore:x.s,just:just||''});log(`Asoció a ${x.p.folio} (puntaje ${x.s})${just?' con justificación':''}`,r.id);toast('Asociado. Falta la revisión administrativa.');render()},
+    Object.assign(r,{pacienteId:x.p.id,estado:'asociado',matchScore:x.s,just:just||''});log(`Asoció a ${x.p.folio} (puntaje ${x.s})${just?' con justificación':''}`,r.id);toast('Asociado. Falta la revisión administrativa.',true);render()},
   rechazar:b=>{const r=res(b.dataset.id);r.estado='rechazado';log('Pidió repetir el estudio',r.id);toast('Se pidió repetir el estudio. EIRA contactará a la paciente.');render()},
   brig:b=>{ui.brig=b.dataset.id;ui.hist=null;render()},
   hist:b=>{ui.at='brigadas';ui.hist=b.dataset.p||null;render()},
   atender:b=>{const s=S.solicitudes.find(s=>s.id===b.dataset.id);s.estado='atendida';log('Atendió solicitud de apoyo',s.id);render()},
-  demopac:()=>{ui.lpf={folio:'EIRA-0142',fnac:'1984-03-12'};render()},
-  salir:()=>{if(ui.pac)log('Cerró sesión');Object.assign(ui,{pac:null,otp:null,pres:null,lpf:null,tokens:{}});render()},
+  demopac:()=>{ui.lpf={folio:'EIRA-014282',fnac:'1984-03-12'};render()},
+  salir:()=>{if(ui.pac)log('Cerró sesión');Object.assign(ui,{pac:null,otp:null,pres:null,lpf:null,tokens:{},apartado:{}});render()},
   pt:b=>{ui.pt=b.dataset.k;ui.pres=null;render()},
   pres:b=>{ui.pres=b.dataset.id||null;render();scrollTo(0,0)},
+  ver:b=>{const id=b.dataset.id,tk=ui.tokens[id];if(!tk||tk.exp<Date.now()){ui.tokens[id]={tok:Array.from(crypto.getRandomValues(new Uint8Array(8)),x=>x.toString(16).padStart(2,'0')).join(''),exp:Date.now()+300000};log('Generó enlace firmado de 5 minutos',id)}ACT.abrir(b)},
   enlace:b=>{const id=b.dataset.id,tok=Array.from(crypto.getRandomValues(new Uint8Array(8)),x=>x.toString(16).padStart(2,'0')).join('');ui.tokens[id]={tok,exp:Date.now()+300000};log('Generó enlace firmado de 5 minutos',id);render()},
   abrir:b=>{const r=res(b.dataset.id),tk=ui.tokens[r.id];if(!tk||tk.exp<Date.now()){toast('El enlace venció. Genera uno nuevo.');render();return}
     if(['autorizado','notificado'].includes(r.estado))r.estado='consultado';log('Abrió su resultado con enlace firmado',r.id);openModal('Tu resultado',docFrame(r))},
   leer:b=>{const r=res(b.dataset.id),ed=EDU[(CATS[r.categoria]||CATS.negativo).g];
     try{speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(`${ed.t}. ${ed.b} Tu médica indicó: ${r.conducta}.`);u.lang='es-MX';u.rate=0.95;speechSynthesis.speak(u);log('Escuchó la explicación en voz alta',r.id)}catch(e){toast('Tu navegador no puede leer en voz alta.')}},
-  hablar:b=>{S.solicitudes.unshift({id:uid('S'),pacienteId:ui.pac,tipo:'Quiere hablar con alguien de EIRA',t:now(),estado:'pendiente'});log('Pidió hablar con alguien de EIRA',b.dataset.id);toast('Listo. Alguien de EIRA te va a contactar pronto.')},
-  apartar:b=>{const x=brg(b.dataset.id);S.solicitudes.unshift({id:uid('S'),pacienteId:ui.pac,tipo:'Apartar lugar en '+x.nombre,t:now(),estado:'pendiente'});log('Pidió apartar lugar en brigada',x.id);toast(`Pedimos tu lugar en ${x.nombre}. EIRA te confirmará.`)}
+  hablar:b=>{S.solicitudes.unshift({id:uid('S'),pacienteId:ui.pac,tipo:'Quiere hablar con alguien de EIRA',t:now(),estado:'pendiente'});log('Pidió hablar con alguien de EIRA',b.dataset.id);toast('Listo. Alguien de EIRA te va a contactar pronto.',true)},
+  apartar:b=>{const x=brg(b.dataset.id);S.solicitudes.unshift({id:uid('S'),pacienteId:ui.pac,tipo:'Apartar lugar en '+x.nombre,t:now(),estado:'pendiente'});log('Pidió apartar lugar en brigada',x.id);ui.apartado=Object.assign(ui.apartado||{},{[x.id]:true});render()}
 };
 const FORM={
   upload:(f,fd)=>{const file=fd.get('file'),id='R-0'+(++S.seq);
     const r={id,pacienteId:null,brigadaId:fd.get('brigada'),folioRep:fd.get('folio').trim(),nombreRep:fd.get('nombre').trim(),fnacRep:fd.get('fnac'),labCat:ui.pf?'lsil':'negativo',archivo:'sintetico',estado:'cargado',estudios:[],creado:now()};
     if(file&&file.size){r.archivo='subido';r.archivoNombre=file.name;blobs[id]=URL.createObjectURL(file)}
-    S.resultados.push(r);ui.pf=null;log('Subió resultado escaneado',id);toast(`${id} cargado. Pasa a la bandeja de EIRA para asociarlo.`);render()},
+    S.resultados.push(r);ui.pf=null;log('Subió resultado escaneado',id);toast(`${id} cargado. Pasa a la bandeja de EIRA para asociarlo.`,true);render()},
   obs:(f,fd)=>{const r=res(f.dataset.id);r.estado='observado';r.motivo=fd.get('motivo').trim();ui.modal=null;log('Marcó observado: '+r.motivo,r.id);render()},
   revision:(f,fd)=>{if(!(fd.get('c1')&&fd.get('c2')&&fd.get('c3'))){toast('Marca las tres verificaciones o márcalo como observado.');return}
-    const r=res(f.dataset.id);r.estado='revisado';log('Aprobó revisión administrativa',r.id);toast('Revisado. Pasa a la cola de la médica.');render()},
+    const r=res(f.dataset.id);r.estado='revisado';log('Aprobó revisión administrativa',r.id);toast('Revisado. Pasa a la cola de la médica.',true);render()},
   autorizar:(f,fd)=>{const r=res(f.dataset.id),cat=fd.get('categoria');if(!cat||!fd.get('conducta')){toast('Elige categoría y conducta.');return}
     Object.assign(r,{categoria:cat,conducta:fd.get('conducta'),estudios:fd.getAll('estudios'),nota:fd.get('nota'),acompanada:!!fd.get('acompanada')||CATS[cat].g==='acompanada',estado:'autorizado'});
-    log('Autorizó resultado ('+(r.acompanada?'entrega acompañada':'publicación en línea')+')',r.id);toast('Autorizado. EIRA ya puede enviar el aviso.');render()},
+    log('Autorizó resultado ('+(r.acompanada?'entrega acompañada':'publicación en línea')+')',r.id);toast('Autorizado. EIRA ya puede enviar el aviso.',true);render()},
   aviso:(f,fd)=>{const r=res(f.dataset.id),p=pac(r.pacienteId),canal=fd.get('canal');
     S.avisos.unshift({id:uid('A'),resId:r.id,canal,destino:canal==='Correo'?p.email.replace(/^(.).*@/,'$1•••@'):canal==='SMS'?maskTel(p.tel):'Sede EIRA',texto:textoAviso(r,canal),t:now()});
-    r.estado='notificado';log(`Envió aviso neutro (${canal})`,r.id);toast('Aviso enviado, sin diagnóstico.');render()},
+    r.estado='notificado';log(`Envió aviso neutro (${canal})`,r.id);toast('Aviso enviado, sin diagnóstico.',true);render()},
   buscar:(f,fd)=>{ui.q=fd.get('q').trim();ui.hist=null;render()},
-  brigada:(f,fd)=>{const b={id:uid('B'),nombre:fd.get('nombre').trim(),municipio:fd.get('municipio').trim(),fecha:fd.get('fecha'),servicios:fd.getAll('serv')};if(!b.servicios.length)b.servicios=['Citología'];S.brigadas.push(b);ui.brig=b.id;ui.hist=null;log('Registró brigada '+b.nombre,b.id);toast('Brigada registrada.');render()},
-  atencion:(f,fd)=>{const b=brg(f.dataset.id),folio=fd.get('folio').trim().toLowerCase(),s=fd.get('serv'),p=S.pacientes.find(p=>p.folio.toLowerCase()===folio);
+  brigada:(f,fd)=>{const b={id:uid('B'),nombre:fd.get('nombre').trim(),municipio:fd.get('municipio').trim(),fecha:fd.get('fecha'),servicios:fd.getAll('serv')};if(!b.servicios.length)b.servicios=['Citología'];S.brigadas.push(b);ui.brig=b.id;ui.hist=null;log('Registró brigada '+b.nombre,b.id);toast('Brigada registrada.',true);render()},
+  atencion:(f,fd)=>{const b=brg(f.dataset.id),folio=fd.get('folio'),s=fd.get('serv'),p=S.pacientes.find(p=>sameFolio(p.folio,folio));
     if(!p){toast('No existe ese folio. Verifícalo con la paciente.');return}
     const v=S.visitas.find(v=>v.pacienteId===p.id&&v.brigadaId===b.id);if(v){if(!v.servicios.includes(s))v.servicios.push(s)}else S.visitas.push({id:uid('V'),pacienteId:p.id,brigadaId:b.id,servicios:[s]});
-    log(`Registró atención (${s}) de ${p.folio}`,b.id);toast('Atención registrada en el historial.');render()},
-  login:(f,fd)=>{const folio=fd.get('folio').trim().toLowerCase(),p=S.pacientes.find(p=>p.folio.toLowerCase()===folio&&p.fnac===fd.get('fnac'));
+    log(`Registró atención (${s}) de ${p.folio}`,b.id);toast('Atención registrada en el historial.',true);render()},
+  login:(f,fd)=>{const d=folioDigits(fd.get('folio')),fnac=`${fd.get('aaaa')}-${String(fd.get('mm')).padStart(2,'0')}-${String(fd.get('dd')).padStart(2,'0')}`;ui.lpf={folio:d,fnac};
+    if(!luhnOk(d)){toast('Revisa tu folio: son 6 números y parece que uno está cambiado.');return}
+    if(+fd.get('mm')<1||+fd.get('mm')>12||+fd.get('dd')<1||+fd.get('dd')>31||String(fd.get('aaaa')).length!==4){toast('Revisa la fecha: día, mes (01 a 12) y año con 4 números.');return}
+    const p=S.pacientes.find(p=>sameFolio(p.folio,d)&&p.fnac===fnac);
     if(!p){log('Intento de acceso fallido','','Acceso de paciente');toast('Los datos no coinciden. Revisa tu folio y tu fecha de nacimiento.');return}
     ui.otp={pid:p.id,code:String(100000+crypto.getRandomValues(new Uint32Array(1))[0]%900000)};log('Envió código de acceso por SMS','',`Paciente ${p.folio}`);render()},
-  otp:(f,fd)=>{if(fd.get('code').trim()!==ui.otp.code){toast('Código incorrecto.');return}ui.pac=ui.otp.pid;ui.otp=null;ui.pt='docs';ui.pres=null;log('Inició sesión con código');render()}
+  otp:(f,fd)=>{if(fd.get('code').trim()!==ui.otp.code){toast('Ese código no coincide. Revisa el SMS.');f.elements.code.select();return}ui.pac=ui.otp.pid;ui.otp=null;ui.pt='docs';ui.lpf=null;
+    const nuevos=S.resultados.filter(r=>r.pacienteId===ui.pac&&['autorizado','notificado'].includes(r.estado));ui.pres=nuevos.length===1?nuevos[0].id:null;log('Inició sesión con código');toast('Entraste.',true);render();scrollTo(0,0)}
 };
 document.addEventListener('click',e=>{const b=e.target.closest('[data-act]');if(b&&ACT[b.dataset.act]){e.preventDefault();ACT[b.dataset.act](b)}});
 document.addEventListener('submit',e=>{const f=e.target.closest('form[data-form]');if(!f)return;e.preventDefault();FORM[f.dataset.form]?.(f,new FormData(f))});
@@ -437,7 +543,15 @@ document.addEventListener('change',e=>{const t=e.target;
   if(t.name==='categoria'&&t.form){const c=CATS[t.value];if(c){t.form.elements.conducta.value=c.c;t.form.elements.acompanada.checked=c.g==='acompanada'}}
   if(t.name==='canal'&&t.form){t.form.querySelector('.code').textContent=textoAviso(res(t.form.dataset.id),t.value)}
   if(t.dataset.filter){ui.filtro=t.value;render()}});
-document.addEventListener('keydown',e=>{if(e.key==='Escape'&&ui.modal){ui.modal=null;render()}});
+document.addEventListener('keydown',e=>{if(e.key==='Escape'&&ui.modal){ui.modal=null;render()}
+  const t=e.target;if(e.key==='Backspace'&&t.closest&&t.closest('.dob')&&!t.value){const ins=[...t.closest('.dob').querySelectorAll('input')],i=ins.indexOf(t);if(i>0){e.preventDefault();ins[i-1].focus()}}});
+document.addEventListener('input',e=>{const t=e.target;
+  if(t.closest('.folio')){const d=folioDigits(t.value).slice(0,6),box=t.closest('.folio'),h=document.getElementById(t.getAttribute('aria-describedby'));t.value=grp(d);box.classList.remove('ok','bad');if(h){h.className='hint';h.textContent='Son 6 números. Están en tu SMS o en tu papelito de la brigada.'}
+    if(d.length===6){const ok=luhnOk(d);box.classList.add(ok?'ok':'bad');if(h){h.className='hint '+(ok?'ok':'bad');h.textContent=ok?'✓ Folio correcto':'Revisa tu folio: parece que un número está cambiado.'}if(ok)t.form?.elements.dd?.focus()}}
+  if(t.closest('.dob')){t.value=t.value.replace(/\D/g,'');if(t.value.length>=t.maxLength){const ins=[...t.closest('.dob').querySelectorAll('input')],n=ins[ins.indexOf(t)+1];if(n)n.focus()}}
+  if(t.classList.contains('otp')){t.value=t.value.replace(/\D/g,'').slice(0,6);if(t.value.length===6)t.form.requestSubmit()}});
+/* Enlace del SMS o QR de la brigada: eira-contigo.mx/#f=001776 abre la entrada con el folio ya escrito */
+{const m=location.hash.match(/f=([0-9 -]{4,9})/);if(m){ui.rol='paciente';ui.lpf={folio:folioDigits(m[1])};history.replaceState(null,'',location.pathname+location.search)}}
 setInterval(()=>{let fin=false;document.querySelectorAll('[data-exp]').forEach(el=>{const ms=+el.dataset.exp-Date.now();if(ms<=0)fin=true;else{const s=Math.ceil(ms/1000);el.textContent=Math.floor(s/60)+':'+String(s%60).padStart(2,'0')}});if(fin)render()},1000);
 render();
 }
