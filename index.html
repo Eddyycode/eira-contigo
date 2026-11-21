@@ -535,7 +535,7 @@ const FORM={
     if(!p){log('Intento de acceso fallido','','Acceso de paciente');toast('Los datos no coinciden. Revisa tu folio y tu fecha de nacimiento.');return}
     ui.otp={pid:p.id,code:String(100000+crypto.getRandomValues(new Uint32Array(1))[0]%900000)};log('Envió código de acceso por SMS','',`Paciente ${p.folio}`);render()},
   otp:(f,fd)=>{if(fd.get('code').trim()!==ui.otp.code){toast('Ese código no coincide. Revisa el SMS.');f.elements.code.select();return}ui.pac=ui.otp.pid;ui.otp=null;ui.pt='docs';ui.lpf=null;
-    const nuevos=S.resultados.filter(r=>r.pacienteId===ui.pac&&['autorizado','notificado'].includes(r.estado));ui.pres=nuevos.length===1?nuevos[0].id:null;log('Inició sesión con código');toast('Entraste.',true);render();scrollTo(0,0)}
+    const nuevos=S.resultados.filter(r=>r.pacienteId===ui.pac&&['autorizado','notificado'].includes(r.estado));ui.pres=nuevos.length===1?nuevos[0].id:null;log('Inició sesión con código');toast('Entraste.');render();scrollTo(0,0)}
 };
 document.addEventListener('click',e=>{const b=e.target.closest('[data-act]');if(b&&ACT[b.dataset.act]){e.preventDefault();ACT[b.dataset.act](b)}});
 document.addEventListener('submit',e=>{const f=e.target.closest('form[data-form]');if(!f)return;e.preventDefault();FORM[f.dataset.form]?.(f,new FormData(f))});
